@@ -2,9 +2,9 @@
   <section id="socials">
     <h2 class="section-heading">Connect</h2>
     <div class="social-list">
-      <a href="https://instagram.com" target="_blank" rel="noreferrer" aria-label="Instagram">📸 Instagram</a>
-      <a href="https://soundcloud.com" target="_blank" rel="noreferrer" aria-label="SoundCloud">🔊 SoundCloud</a>
-      <a href="mailto:bookings@cyldmusic.com" aria-label="Email">✉️ bookings@cyldmusic.com</a>
+      <a href="https://instagram.com/christianremman/" rel="noreferrer" aria-label="Instagram">📸 Instagram</a>
+      <a href="https://soundcloud.com" rel="noreferrer" aria-label="SoundCloud">🔊 SoundCloud</a>
+      <a href="mailto:cremman@me.com" aria-label="Email">✉️ cremman@me.com</a>
     </div>
   </section>
 </template>

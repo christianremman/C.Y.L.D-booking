@@ -1,16 +1,20 @@
 <script setup>
+import remmanImg from '../assets/image45.jpeg';
+import higgaImg from '../assets/bike.jpeg';
 const djs = [
   {
-    name: 'DJ AERA',
+    name: 'DJ REMMAN',
     bio: 'Experienced club DJ with a passion for house and dance music. Known for reading the crowd and building high-energy sets.',
-    link: 'https://instagram.com',
-    linkLabel: 'Instagram'
+    link: 'https://www.instagram.com/christianremman/',
+    linkLabel: 'Instagram',
+    image: remmanImg
   },
   {
-    name: 'DJ NOVA',
+    name: 'DJ HIGGA',
     bio: 'Versatile open-format DJ blending pop, dance and club edits for unforgettable nights across bars, private events and festivals.',
-    link: 'https://soundcloud.com',
-    linkLabel: 'SoundCloud'
+    link: 'https://www.instagram.com/oliver_wh/',
+    linkLabel: 'Instagram',
+    image: higgaImg
   }
 ];
 </script>
@@ -20,7 +24,7 @@ const djs = [
     <h2 class="section-heading">Meet the DJs</h2>
     <div class="dj-grid">
       <article v-for="dj in djs" :key="dj.name" class="card dj-card">
-        <div class="dj-card__image" :aria-label="`${dj.name} image placeholder`" role="img"></div>
+        <img :src="dj.image" :alt="dj.name" class="dj-card__image" :class="{ 'remman-img': dj.name === 'DJ REMMAN'}" />
         <div class="dj-card__body">
           <h3>{{ dj.name }}</h3>
           <p>{{ dj.bio }}</p>
@@ -49,8 +53,10 @@ const djs = [
 }
 
 .dj-card__image {
-  min-height: 210px;
-  background: linear-gradient(150deg, rgba(110, 93, 255, 0.35), rgba(0, 210, 255, 0.2));
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  display: block;
   border-bottom: 1px solid var(--border);
 }
 

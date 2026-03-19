@@ -5,7 +5,7 @@
         <strong>C.Y.L.D</strong>
         <p>Bookings & Events</p>
       </div>
-      <a href="https://instagram.com" target="_blank" rel="noreferrer">Instagram</a>
+      <a href="https://instagram.com/christianremman/" target="_blank" rel="noreferrer">Instagram</a>
     </div>
   </footer>
 </template>
