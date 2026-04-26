@@ -24,15 +24,18 @@ import Footer from './components/Footer.vue';
 
 <style>
 :root {
-  --bg: #06070d;
-  --surface: #11131d;
-  --surface-soft: #191c27;
-  --text: #f7f8ff;
-  --text-muted: #b7bbd3;
-  --accent: #6e5dff;
-  --accent-2: #00d2ff;
-  --border: #272b3d;
-  --shadow: 0 12px 40px rgba(2, 4, 15, 0.45);
+  --bg: #070605;
+  --surface: #15110f;
+  --surface-soft: #211814;
+  --surface-strong: #2d201b;
+  --text: #fff8ef;
+  --text-muted: #c4b8aa;
+  --accent: #ff3d1f;
+  --accent-2: #f6c46b;
+  --border: rgba(255, 248, 239, 0.14);
+  --radius: 8px;
+  --space-section: clamp(4.5rem, 8vw, 7rem);
+  --shadow: 0 22px 70px rgba(0, 0, 0, 0.46);
 }
 
 * {
@@ -45,15 +48,27 @@ html {
 
 body {
   margin: 0;
-  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  background: radial-gradient(circle at top, #121529 0%, var(--bg) 55%);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  background:
+    linear-gradient(180deg, rgba(7, 6, 5, 0.74), var(--bg) 680px),
+    radial-gradient(circle at 18% 16%, rgba(255, 61, 31, 0.18), transparent 34%),
+    radial-gradient(circle at 82% 12%, rgba(246, 196, 107, 0.12), transparent 30%),
+    var(--bg);
   color: var(--text);
   line-height: 1.6;
+  text-rendering: optimizeLegibility;
 }
 
 a {
   color: inherit;
   text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
 }
 
 main,
@@ -63,13 +78,15 @@ main,
 }
 
 section {
-  padding: 4.8rem 0;
+  padding: var(--space-section) 0;
 }
 
 .section-heading {
-  font-size: clamp(1.8rem, 2.8vw, 2.6rem);
-  margin-bottom: 1rem;
-  letter-spacing: 0.02em;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(2.35rem, 5vw, 4.7rem);
+  line-height: 0.95;
+  margin: 0 0 1rem;
+  letter-spacing: 0;
 }
 
 .section-text {
@@ -78,15 +95,39 @@ section {
 }
 
 .card {
-  background: linear-gradient(145deg, rgba(24, 27, 39, 0.9), rgba(14, 16, 24, 0.95));
+  background: linear-gradient(145deg, rgba(33, 24, 20, 0.92), rgba(13, 10, 9, 0.96));
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: var(--radius);
   box-shadow: var(--shadow);
+}
+
+.text-kicker {
+  color: var(--accent-2);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+::selection {
+  background: rgba(255, 61, 31, 0.55);
+  color: var(--text);
 }
 
 @media (max-width: 720px) {
   section {
     padding: 4rem 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
   }
 }
 </style>

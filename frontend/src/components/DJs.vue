@@ -1,6 +1,7 @@
 <script setup>
 import remmanImg from '../assets/image45.jpeg';
 import higgaImg from '../assets/bike.jpeg';
+
 const djs = [
   {
     name: 'DJ REMMAN',
@@ -21,10 +22,11 @@ const djs = [
 
 <template>
   <section id="djs">
+    <p class="text-kicker">Residents</p>
     <h2 class="section-heading">Meet the DJs</h2>
     <div class="dj-grid">
       <article v-for="dj in djs" :key="dj.name" class="card dj-card">
-        <img :src="dj.image" :alt="dj.name" class="dj-card__image" :class="{ 'remman-img': dj.name === 'DJ REMMAN'}" />
+        <img :src="dj.image" :alt="dj.name" class="dj-card__image" />
         <div class="dj-card__body">
           <h3>{{ dj.name }}</h3>
           <p>{{ dj.bio }}</p>
@@ -39,33 +41,38 @@ const djs = [
 .dj-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.4rem;
+  gap: clamp(1rem, 3vw, 1.6rem);
+  margin-top: 1.6rem;
 }
 
 .dj-card {
   overflow: hidden;
-  transition: transform 0.28s ease, border-color 0.28s ease;
+  transition: transform 0.28s ease, border-color 0.28s ease, filter 0.28s ease;
 }
 
 .dj-card:hover {
   transform: translateY(-6px);
-  border-color: rgba(110, 93, 255, 0.65);
+  border-color: rgba(246, 196, 107, 0.5);
+  filter: brightness(1.06);
 }
 
 .dj-card__image {
   width: 100%;
-  height: 260px;
+  height: clamp(280px, 36vw, 430px);
   object-fit: cover;
   display: block;
   border-bottom: 1px solid var(--border);
+  filter: grayscale(0.22) saturate(0.86) contrast(1.08);
 }
 
 .dj-card__body {
-  padding: 1.3rem;
+  padding: 1.4rem;
 }
 
 .dj-card h3 {
   margin: 0;
+  font-size: clamp(1.4rem, 2.6vw, 2.2rem);
+  line-height: 1;
 }
 
 .dj-card p {
@@ -75,7 +82,10 @@ const djs = [
 
 .dj-card a {
   color: var(--accent-2);
-  font-weight: 600;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
 }
 
 @media (max-width: 760px) {
