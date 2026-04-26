@@ -1,29 +1,45 @@
 # C.Y.L.D Booking
 
-## Project Summary
+C.Y.L.D Booking is a full-stack booking site for a DJ collective. The repository is split into a Vue/Vite frontend and a Spring Boot backend.
 
-C.Y.L.D Booking is a small frontend project for a DJ collective called C.Y.L.D. The purpose of the project is to present the collective, show who the DJs are, communicate the types of events they perform at, and give potential clients a simple way to send a booking request.
+## Structure
 
-At its current stage, the project works as a focused promotional and booking landing page. It is built to give visitors enough context to understand the brand, the performers, and the booking use case without adding unnecessary complexity.
+- `frontend/` - Vue 3 and Vite landing page.
+- `backend/` - Spring Boot booking API.
+- `docs/` - project planning notes.
 
-## What the Project Is About
+## Requirements
 
-The site is centered around one main goal: helping venues, organizers, and private clients quickly understand what C.Y.L.D offers and how to get in touch.
+- Node.js for frontend development.
+- Java 21 and Maven for backend development.
 
-The current version includes:
+## Frontend
 
-- A hero section introducing C.Y.L.D as a DJ collective for clubs, events, and festivals
-- An about section describing the collective and its music profile
-- DJ profile cards for the current performers
-- An event section showing the types of bookings the collective is suited for
-- A booking form for collecting client inquiries
-- Social and contact links for direct follow-up
+```powershell
+cd frontend
+npm install
+npm run dev
+```
 
-## Tech Stack
+## Backend
 
-- Vue 3
-- Vite
+```powershell
+cd backend
+mvn spring-boot:run
+```
 
-## Current Status
+The backend exposes `POST /api/bookings`.
 
-This is an early-stage version of the project focused on communicating the concept and booking flow. The structure may be reorganized later, but the current implementation already defines the core direction of the site: a simple, branded booking experience for the C.Y.L.D collective.
+## Checks
+
+```powershell
+cd frontend
+npm run build
+```
+
+```powershell
+cd backend
+mvn test
+```
+
+Mail settings are read from environment variables. Copy `.env.example` to a local `.env` when mail delivery is implemented.
