@@ -64,7 +64,7 @@ Copy `.env.example` to `.env` and fill in the SMTP values:
 Copy-Item .env.example .env
 ```
 
-When the backend is run from `backend/`, Spring Boot imports the repo-root `.env` file through `spring.config.import=optional:file:../.env[.properties]`.
+When the backend is started from the `backend/` directory, Spring Boot imports the repo-root `.env` file with `spring.config.import=optional:file:../.env[.properties]`.
 
 Required variables:
 
