@@ -1,8 +1,9 @@
 package com.cyld.booking.booking;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -25,32 +26,18 @@ class BookingControllerTests {
 
     @Test
     void acceptsValidRequestAndDelegatesToService() throws Exception {
-        when(bookingService.submit(argThat(request -> "Alex Booker".equals(request.name()))))
-                .thenReturn(new BookingResponse(true, "Booking request sent."));
-
         mockMvc.perform(post("/api/bookings")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                  "name": "Alex Booker",
-                                  "email": "alex@example.com",
-                                  "phone": "+47 123 45 678",
-                                  "eventDate": "2026-05-20",
-                                  "eventLocation": "Oslo",
-                                  "eventType": "Club",
-                                  "budget": "25000 NOK",
-                                  "message": "Need a DJ set for a club night."
-                                }
-                                """))
+                        .content(validRequestJson()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("Booking request sent."));
 
-        verify(bookingService).submit(argThat(request ->
+        verify(bookingService).sendBookingRequest(argThat(request ->
                 "Alex Booker".equals(request.name())
                         && "alex@example.com".equals(request.email())
                         && "Oslo".equals(request.eventLocation())
-                        && "Club".equals(request.eventType())));
+                        && "Club night".equals(request.eventType())));
     }
 
     @Test
@@ -71,5 +58,32 @@ class BookingControllerTests {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.message").isNotEmpty());
+    }
+
+    @Test
+    void returnsSafeErrorWhenEmailDeliveryFails() throws Exception {
+        doThrow(new BookingEmailException("smtp detail")).when(bookingService).sendBookingRequest(any());
+
+        mockMvc.perform(post("/api/bookings")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(validRequestJson()))
+                .andExpect(status().isBadGateway())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("Booking request could not be sent. Please try again later."));
+    }
+
+    private static String validRequestJson() {
+        return """
+                {
+                  "name": "Alex Booker",
+                  "email": "alex@example.com",
+                  "phone": "+47 123 45 678",
+                  "eventDate": "2026-05-20",
+                  "eventLocation": "Oslo",
+                  "eventType": "Club night",
+                  "budget": "15000 NOK",
+                  "message": "We want to book C.Y.L.D for a late set."
+                }
+                """;
     }
 }

@@ -5,13 +5,13 @@ import java.util.Comparator;
 import jakarta.validation.Valid;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -25,18 +25,23 @@ public class BookingController {
     }
 
     @PostMapping
-    public BookingResponse createBooking(@Valid @RequestBody BookingRequest request) {
-        return bookingService.submit(request);
+    public ResponseEntity<BookingResponse> createBooking(@Valid @RequestBody BookingRequest request) {
+        try {
+            bookingService.sendBookingRequest(request);
+            return ResponseEntity.ok(new BookingResponse(true, "Booking request sent."));
+        } catch (BookingEmailException exception) {
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                    .body(new BookingResponse(false, "Booking request could not be sent. Please try again later."));
+        }
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public BookingResponse handleValidation(MethodArgumentNotValidException exception) {
+    public ResponseEntity<BookingResponse> handleValidation(MethodArgumentNotValidException exception) {
         String message = exception.getBindingResult().getFieldErrors().stream()
                 .min(Comparator.comparing(FieldError::getField))
                 .map(FieldError::getDefaultMessage)
                 .orElse("Booking request is invalid.");
 
-        return new BookingResponse(false, message);
+        return ResponseEntity.badRequest().body(new BookingResponse(false, message));
     }
 }
