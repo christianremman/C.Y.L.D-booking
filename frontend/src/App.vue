@@ -30,7 +30,7 @@ import Footer from './components/Footer.vue';
   --surface-strong: #2d201b;
   --text: #fff8ef;
   --text-muted: #c4b8aa;
-  --accent: #ff3d1f;
+  --accent: #cc321b;
   --accent-2: #f6c46b;
   --border: rgba(255, 248, 239, 0.14);
   --radius: 8px;
@@ -62,6 +62,11 @@ body {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+a:focus-visible {
+  outline: 3px solid rgba(246, 196, 107, 0.9);
+  outline-offset: 3px;
 }
 
 button,
@@ -110,7 +115,7 @@ section {
 }
 
 ::selection {
-  background: rgba(255, 61, 31, 0.55);
+  background: rgba(204, 50, 27, 0.72);
   color: var(--text);
 }
 

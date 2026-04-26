@@ -25,7 +25,7 @@ const events = [
         :key="event.title"
         class="card event-card"
         :style="{
-          backgroundImage: `linear-gradient(180deg, rgba(7, 6, 5, 0.08), rgba(7, 6, 5, 0.88)), url(${event.image})`,
+          backgroundImage: `linear-gradient(180deg, rgba(7, 6, 5, 0.34), rgba(7, 6, 5, 0.94)), url(${event.image})`,
           backgroundPosition: event.position || 'center',
         }"
       >
@@ -63,6 +63,7 @@ const events = [
   width: 14px;
   height: 14px;
   border: 2px solid var(--accent-2);
+  background: rgba(7, 6, 5, 0.64);
   transform: rotate(45deg);
 }
 
@@ -70,6 +71,7 @@ const events = [
   margin: 1.45rem 0 0;
   font-size: 1rem;
   line-height: 1.15;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.86);
 }
 
 @media (max-width: 960px) {

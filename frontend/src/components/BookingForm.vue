@@ -192,8 +192,8 @@ button {
 }
 
 .booking-form__status.is-error {
-  border-color: rgba(255, 61, 31, 0.5);
-  background: rgba(255, 61, 31, 0.11);
+  border-color: rgba(204, 50, 27, 0.72);
+  background: rgba(204, 50, 27, 0.16);
 }
 
 button {
@@ -213,17 +213,18 @@ button {
 
 button:hover:not(:disabled) {
   transform: translateY(-1px);
-  filter: brightness(1.08);
+  background: #b92b16;
 }
 
 button:focus-visible {
-  outline: 3px solid rgba(246, 196, 107, 0.55);
+  outline: 3px solid rgba(246, 196, 107, 0.9);
   outline-offset: 3px;
 }
 
 button:disabled {
   cursor: wait;
-  opacity: 0.68;
+  background: #743126;
+  color: rgba(255, 248, 239, 0.82);
 }
 
 @media (max-width: 860px) {
