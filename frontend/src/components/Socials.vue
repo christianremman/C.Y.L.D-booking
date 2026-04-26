@@ -32,4 +32,9 @@
   border-color: var(--accent-2);
   color: var(--text);
 }
+
+.social-list a:focus-visible {
+  outline: 3px solid rgba(246, 196, 107, 0.9);
+  outline-offset: 3px;
+}
 </style>

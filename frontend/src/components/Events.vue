@@ -1,5 +1,17 @@
 <script setup>
-const events = ['Clubs', 'Festivals', 'Private Events', 'Bars & Lounges', 'Corporate Events'];
+import clubImg from '../assets/remman/dj/2Rem.jpeg';
+import festivalImg from '../assets/higga/dj/2Hig.jpeg';
+import privateImg from '../assets/PrivateEvent.jpeg';
+import barImg from '../assets/BarsAndLounges.JPG';
+import corporateImg from '../assets/CorporateEvent.jpeg';
+
+const events = [
+  { title: 'Clubs', image: clubImg },
+  { title: 'Festivals', image: festivalImg },
+  { title: 'Private Events', image: privateImg },
+  { title: 'Bars & Lounges', image: barImg, position: 'center top' },
+  { title: 'Corporate Events', image: corporateImg },
+];
 </script>
 
 <template>
@@ -8,9 +20,17 @@ const events = ['Clubs', 'Festivals', 'Private Events', 'Bars & Lounges', 'Corpo
     <h2 class="section-heading">Where We Perform</h2>
     <p class="section-text">We adapt our music selection to the crowd and the atmosphere of the event.</p>
     <div class="event-grid">
-      <article v-for="event in events" :key="event" class="card event-card">
+      <article
+        v-for="event in events"
+        :key="event.title"
+        class="card event-card"
+        :style="{
+          backgroundImage: `linear-gradient(180deg, rgba(7, 6, 5, 0.34), rgba(7, 6, 5, 0.94)), url(${event.image})`,
+          backgroundPosition: event.position || 'center',
+        }"
+      >
         <span class="event-card__icon" aria-hidden="true"></span>
-        <h3>{{ event }}</h3>
+        <h3>{{ event.title }}</h3>
       </article>
     </div>
   </section>
@@ -25,11 +45,13 @@ const events = ['Clubs', 'Festivals', 'Private Events', 'Bars & Lounges', 'Corpo
 }
 
 .event-card {
-  min-height: 132px;
+  min-height: 180px;
   padding: 1.2rem 1rem;
   display: grid;
   align-content: end;
+  background-size: cover;
   transition: transform 0.22s ease, border-color 0.22s ease;
+  overflow: hidden;
 }
 
 .event-card:hover {
@@ -41,6 +63,7 @@ const events = ['Clubs', 'Festivals', 'Private Events', 'Bars & Lounges', 'Corpo
   width: 14px;
   height: 14px;
   border: 2px solid var(--accent-2);
+  background: rgba(7, 6, 5, 0.64);
   transform: rotate(45deg);
 }
 
@@ -48,6 +71,7 @@ const events = ['Clubs', 'Festivals', 'Private Events', 'Bars & Lounges', 'Corpo
   margin: 1.45rem 0 0;
   font-size: 1rem;
   line-height: 1.15;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.86);
 }
 
 @media (max-width: 960px) {

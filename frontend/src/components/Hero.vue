@@ -43,7 +43,7 @@
   background:
     linear-gradient(90deg, rgba(7, 6, 5, 0.96) 0%, rgba(7, 6, 5, 0.72) 48%, rgba(7, 6, 5, 0.2) 100%),
     linear-gradient(0deg, var(--bg) 0%, rgba(7, 6, 5, 0.18) 38%),
-    url('../assets/image8.jpeg') center / cover;
+    url('../assets/remman/dj/1Rem.jpg') center / cover;
   filter: saturate(0.72) contrast(1.14);
 }
 
@@ -131,12 +131,12 @@ nav a:focus-visible {
 
 .hero__cta:hover {
   transform: translateY(-2px);
-  background: #ff512f;
+  background: #b92b16;
   box-shadow: 0 18px 36px rgba(255, 61, 31, 0.28);
 }
 
 .hero__cta:focus-visible {
-  outline: 3px solid rgba(246, 196, 107, 0.55);
+  outline: 3px solid rgba(246, 196, 107, 0.9);
   outline-offset: 3px;
 }
 
@@ -162,7 +162,7 @@ nav a:focus-visible {
   .hero::before {
     background:
       linear-gradient(180deg, rgba(7, 6, 5, 0.6), rgba(7, 6, 5, 0.95) 72%, var(--bg)),
-      url('../assets/image8.jpeg') center / cover;
+      url('../assets/remman/dj/1Rem.jpg') center / cover;
   }
 }
 

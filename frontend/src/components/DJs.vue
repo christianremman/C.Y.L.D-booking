@@ -1,6 +1,6 @@
 <script setup>
-import remmanImg from '../assets/image45.jpeg';
-import higgaImg from '../assets/bike.jpeg';
+import remmanImg from '../assets/remman/dj/ProRem.jpeg';
+import higgaImg from '../assets/higga/dj/ProHig.JPG';
 
 const djs = [
   {
