@@ -4,11 +4,12 @@ const events = ['Clubs', 'Festivals', 'Private Events', 'Bars & Lounges', 'Corpo
 
 <template>
   <section id="events">
+    <p class="text-kicker">Events</p>
     <h2 class="section-heading">Where We Perform</h2>
     <p class="section-text">We adapt our music selection to the crowd and the atmosphere of the event.</p>
     <div class="event-grid">
       <article v-for="event in events" :key="event" class="card event-card">
-        <span class="event-card__icon">◆</span>
+        <span class="event-card__icon" aria-hidden="true"></span>
         <h3>{{ event }}</h3>
       </article>
     </div>
@@ -17,24 +18,36 @@ const events = ['Clubs', 'Festivals', 'Private Events', 'Bars & Lounges', 'Corpo
 
 <style scoped>
 .event-grid {
-  margin-top: 1.4rem;
+  margin-top: 1.8rem;
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 0.9rem;
 }
 
 .event-card {
+  min-height: 132px;
   padding: 1.2rem 1rem;
-  text-align: center;
+  display: grid;
+  align-content: end;
+  transition: transform 0.22s ease, border-color 0.22s ease;
+}
+
+.event-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(246, 196, 107, 0.36);
 }
 
 .event-card__icon {
-  color: var(--accent-2);
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--accent-2);
+  transform: rotate(45deg);
 }
 
 .event-card h3 {
-  margin: 0.55rem 0 0;
+  margin: 1.45rem 0 0;
   font-size: 1rem;
+  line-height: 1.15;
 }
 
 @media (max-width: 960px) {

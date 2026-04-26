@@ -15,6 +15,7 @@ footer {
   border-top: 1px solid var(--border);
   padding: 1.7rem 0 2.4rem;
   margin-top: 1.6rem;
+  background: rgba(0, 0, 0, 0.22);
 }
 
 .footer-inner {
@@ -31,6 +32,7 @@ footer {
 
 .footer-inner a {
   color: var(--accent-2);
+  font-weight: 800;
 }
 
 @media (max-width: 620px) {
