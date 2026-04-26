@@ -9,7 +9,7 @@ const events = [
   { title: 'Clubs', image: clubImg },
   { title: 'Festivals', image: festivalImg },
   { title: 'Private Events', image: privateImg },
-  { title: 'Bars & Lounges', image: barImg },
+  { title: 'Bars & Lounges', image: barImg, position: 'center top' },
   { title: 'Corporate Events', image: corporateImg },
 ];
 </script>
@@ -24,7 +24,10 @@ const events = [
         v-for="event in events"
         :key="event.title"
         class="card event-card"
-        :style="{ backgroundImage: `linear-gradient(180deg, rgba(7, 6, 5, 0.08), rgba(7, 6, 5, 0.88)), url(${event.image})` }"
+        :style="{
+          backgroundImage: `linear-gradient(180deg, rgba(7, 6, 5, 0.08), rgba(7, 6, 5, 0.88)), url(${event.image})`,
+          backgroundPosition: event.position || 'center',
+        }"
       >
         <span class="event-card__icon" aria-hidden="true"></span>
         <h3>{{ event.title }}</h3>
@@ -46,7 +49,6 @@ const events = [
   padding: 1.2rem 1rem;
   display: grid;
   align-content: end;
-  background-position: center;
   background-size: cover;
   transition: transform 0.22s ease, border-color 0.22s ease;
   overflow: hidden;
