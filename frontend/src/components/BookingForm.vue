@@ -1,5 +1,10 @@
 <script setup>
-import { reactive, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
+
+import { buildApiUrl, turnstileSiteKey } from '../lib/config';
+import { loadTurnstile, removeTurnstileWidget, renderTurnstileWidget, resetTurnstileWidget } from '../lib/turnstile';
+
+const GENERIC_ERROR_MESSAGE = 'Booking request could not be sent. Please try again later.';
 
 const initialForm = {
   name: '',
@@ -15,9 +20,54 @@ const initialForm = {
 const form = reactive({ ...initialForm });
 const status = ref('idle');
 const responseMessage = ref('');
+const turnstileContainer = ref(null);
+const turnstileToken = ref('');
+const widgetId = ref(null);
+const turnstileEnabled = Boolean(turnstileSiteKey);
+
+const canSubmit = computed(() => {
+  if (status.value === 'submitting') {
+    return false;
+  }
+
+  if (!turnstileEnabled) {
+    return true;
+  }
+
+  return Boolean(turnstileToken.value);
+});
 
 const resetForm = () => {
   Object.assign(form, initialForm);
+};
+
+const resetTurnstile = () => {
+  turnstileToken.value = '';
+
+  if (widgetId.value !== null) {
+    resetTurnstileWidget(widgetId.value);
+  }
+};
+
+const initializeTurnstile = async () => {
+  if (!turnstileEnabled || !turnstileContainer.value) {
+    return;
+  }
+
+  await loadTurnstile();
+
+  widgetId.value = renderTurnstileWidget(turnstileContainer.value, {
+    sitekey: turnstileSiteKey,
+    callback: (token) => {
+      turnstileToken.value = token;
+    },
+    'expired-callback': () => {
+      turnstileToken.value = '';
+    },
+    'error-callback': () => {
+      turnstileToken.value = '';
+    },
+  });
 };
 
 const submitBooking = async () => {
@@ -25,28 +75,49 @@ const submitBooking = async () => {
   responseMessage.value = '';
 
   try {
-    const response = await fetch('/api/bookings', {
+    const response = await fetch(buildApiUrl('/api/bookings'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ ...form }),
+      body: JSON.stringify({
+        ...form,
+        turnstileToken: turnstileToken.value,
+      }),
     });
 
     const data = await response.json().catch(() => ({}));
 
     if (!response.ok || data.success === false) {
-      throw new Error(data.message || 'Booking request could not be sent.');
+      const message = response.status === 400 && typeof data.message === 'string'
+        ? data.message
+        : GENERIC_ERROR_MESSAGE;
+
+      throw new Error(message);
     }
 
     status.value = 'success';
     responseMessage.value = data.message || 'Booking request sent.';
     resetForm();
+    resetTurnstile();
   } catch (error) {
     status.value = 'error';
-    responseMessage.value = error.message || 'Booking request could not be sent.';
+    responseMessage.value = error instanceof Error && error.message
+      ? error.message
+      : GENERIC_ERROR_MESSAGE;
+    resetTurnstile();
   }
 };
+
+onMounted(() => {
+  initializeTurnstile();
+});
+
+onBeforeUnmount(() => {
+  if (widgetId.value !== null) {
+    removeTurnstileWidget(widgetId.value);
+  }
+});
 </script>
 
 <template>
@@ -62,17 +133,17 @@ const submitBooking = async () => {
     <form class="card booking-form" @submit.prevent="submitBooking">
       <label>
         Name
-        <input v-model.trim="form.name" type="text" name="name" autocomplete="name" required />
+        <input v-model.trim="form.name" type="text" name="name" autocomplete="name" required maxlength="100" />
       </label>
 
       <label>
         Email
-        <input v-model.trim="form.email" type="email" name="email" autocomplete="email" required />
+        <input v-model.trim="form.email" type="email" name="email" autocomplete="email" required maxlength="254" />
       </label>
 
       <label>
         Phone
-        <input v-model.trim="form.phone" type="tel" name="phone" autocomplete="tel" required />
+        <input v-model.trim="form.phone" type="tel" name="phone" autocomplete="tel" required maxlength="30" />
       </label>
 
       <label>
@@ -82,7 +153,7 @@ const submitBooking = async () => {
 
       <label>
         Event Location
-        <input v-model.trim="form.eventLocation" type="text" name="eventLocation" required />
+        <input v-model.trim="form.eventLocation" type="text" name="eventLocation" required maxlength="120" />
       </label>
 
       <label>
@@ -101,19 +172,21 @@ const submitBooking = async () => {
 
       <label>
         Budget (optional)
-        <input v-model.trim="form.budget" type="text" name="budget" />
+        <input v-model.trim="form.budget" type="text" name="budget" maxlength="60" />
       </label>
 
       <label class="booking-form__message">
         Message
-        <textarea v-model.trim="form.message" name="message" rows="5" required></textarea>
+        <textarea v-model.trim="form.message" name="message" rows="5" required maxlength="2000"></textarea>
       </label>
+
+      <div v-if="turnstileEnabled" ref="turnstileContainer" class="booking-form__turnstile"></div>
 
       <div v-if="responseMessage" class="booking-form__status" :class="`is-${status}`" role="status">
         {{ responseMessage }}
       </div>
 
-      <button type="submit" :disabled="status === 'submitting'">
+      <button type="submit" :disabled="!canSubmit">
         {{ status === 'submitting' ? 'Sending...' : 'Send Booking Request' }}
       </button>
     </form>
@@ -174,9 +247,14 @@ textarea {
 }
 
 .booking-form__message,
+.booking-form__turnstile,
 .booking-form__status,
 button {
   grid-column: 1 / -1;
+}
+
+.booking-form__turnstile {
+  min-height: 65px;
 }
 
 .booking-form__status {

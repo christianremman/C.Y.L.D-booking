@@ -3,7 +3,10 @@ package com.cyld.booking.booking;
 import java.util.Comparator;
 
 import jakarta.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -18,18 +21,47 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/bookings")
 public class BookingController {
 
-    private final BookingService bookingService;
+    private static final Logger logger = LoggerFactory.getLogger(BookingController.class);
 
-    public BookingController(BookingService bookingService) {
+    private final BookingService bookingService;
+    private final TurnstileVerificationService turnstileVerificationService;
+    private final BookingRateLimiter bookingRateLimiter;
+
+    public BookingController(
+            BookingService bookingService,
+            TurnstileVerificationService turnstileVerificationService,
+            BookingRateLimiter bookingRateLimiter
+    ) {
         this.bookingService = bookingService;
+        this.turnstileVerificationService = turnstileVerificationService;
+        this.bookingRateLimiter = bookingRateLimiter;
     }
 
     @PostMapping
-    public ResponseEntity<BookingResponse> createBooking(@Valid @RequestBody BookingRequest request) {
+    public ResponseEntity<BookingResponse> createBooking(
+            @Valid @RequestBody BookingRequest request,
+            HttpServletRequest httpRequest
+    ) {
+        String clientIp = extractClientIp(httpRequest);
+        logger.info("Received booking request from ip={}", clientIp);
+
+        if (!bookingRateLimiter.allow(clientIp)) {
+            logger.warn("Rejected booking request due to rate limit ip={}", clientIp);
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                    .body(new BookingResponse(false, "Booking request could not be sent. Please try again later."));
+        }
+
+        if (!turnstileVerificationService.verify(request.turnstileToken(), clientIp)) {
+            logger.warn("Rejected booking request due to invalid turnstile token ip={}", clientIp);
+            return ResponseEntity.badRequest()
+                    .body(new BookingResponse(false, "Booking request could not be sent. Please try again."));
+        }
+
         try {
             bookingService.sendBookingRequest(request);
             return ResponseEntity.ok(new BookingResponse(true, "Booking request sent."));
         } catch (BookingEmailException exception) {
+            logger.error("Booking email delivery failed ip={}", clientIp, exception);
             return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
                     .body(new BookingResponse(false, "Booking request could not be sent. Please try again later."));
         }
@@ -42,6 +74,16 @@ public class BookingController {
                 .map(FieldError::getDefaultMessage)
                 .orElse("Booking request is invalid.");
 
+        logger.warn("Rejected booking request due to validation failure message={}", message);
         return ResponseEntity.badRequest().body(new BookingResponse(false, message));
+    }
+
+    private static String extractClientIp(HttpServletRequest request) {
+        String forwardedFor = request.getHeader("X-Forwarded-For");
+        if (forwardedFor != null && !forwardedFor.isBlank()) {
+            return forwardedFor.split(",")[0].trim();
+        }
+
+        return request.getRemoteAddr();
     }
 }
