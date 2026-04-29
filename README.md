@@ -34,6 +34,17 @@ cd backend
 mvn spring-boot:run
 ```
 
+## Docker
+
+Build and run the backend Docker image:
+
+```powershell
+docker build -t cyld-booking ./backend
+docker run --env-file .env -p 8080:8080 cyld-booking
+```
+
+The Docker image serves the Spring Boot API and any files committed under `backend/src/main/resources/static/`.
+
 The backend exposes:
 
 ```text
