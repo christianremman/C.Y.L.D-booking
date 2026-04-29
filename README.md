@@ -45,6 +45,18 @@ docker run --env-file .env -p 8080:8080 cyld-booking
 
 The Docker image serves the Spring Boot API and any files committed under `backend/src/main/resources/static/`.
 
+## Render Deployment
+
+Render is configured by `render.yaml` at the repo root. Create the service from the Blueprint or make sure the Render service uses:
+
+```text
+Runtime: Docker
+Dockerfile Path: ./backend/Dockerfile
+Docker Context: ./backend
+```
+
+Set the required mail environment variables in Render. Do not set `PORT`; Render provides it automatically.
+
 The backend exposes:
 
 ```text
