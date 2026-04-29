@@ -80,7 +80,8 @@ class EmailBookingServiceTests {
                 "Oslo",
                 "Club night",
                 "15000 NOK",
-                "We want to book C.Y.L.D for a late set."
+                "We want to book C.Y.L.D for a late set.",
+                "token-123"
         );
     }
 }

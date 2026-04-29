@@ -1,5 +1,7 @@
 package com.cyld.booking.booking;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
@@ -9,6 +11,8 @@ import org.springframework.util.StringUtils;
 
 @Service
 public class EmailBookingService implements BookingService {
+
+    private static final Logger logger = LoggerFactory.getLogger(EmailBookingService.class);
 
     private final JavaMailSender mailSender;
     private final String mailFrom;
@@ -39,12 +43,14 @@ public class EmailBookingService implements BookingService {
         try {
             mailSender.send(message);
         } catch (MailException exception) {
+            logger.error("Booking email delivery failed for recipient={}", bookingRecipient, exception);
             throw new BookingEmailException("Booking email delivery failed.", exception);
         }
     }
 
     private static void requireMailAddress(String value, String message) {
         if (!StringUtils.hasText(value)) {
+            logger.warn("Booking mail configuration is missing: {}", message);
             throw new BookingEmailException(message);
         }
     }

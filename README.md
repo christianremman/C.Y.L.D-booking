@@ -97,6 +97,13 @@ Required variables:
 - `MAIL_PASSWORD`
 - `MAIL_FROM`
 - `BOOKING_RECIPIENT`
+- `TURNSTILE_SECRET`
+- `FRONTEND_ORIGIN`
+
+Frontend build variables for split deployments:
+
+- `VITE_API_BASE_URL`
+- `VITE_TURNSTILE_SITE_KEY`
 
 Use provider-specific app passwords where required, especially for Gmail. For local testing, Mailtrap is a safer option than sending real email. Never commit a real `.env` file.
 
