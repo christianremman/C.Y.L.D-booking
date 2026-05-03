@@ -1,6 +1,6 @@
 <script setup>
 import remmanImg from '../assets/remman/dj/ProRem.jpeg';
-import higgaImg from '../assets/higga/dj/ProHig.JPG';
+import discoHigginsImg from '../assets/disco-higgins/dj/ProDiscoHiggins.JPG';
 
 const djs = [
   {
@@ -11,11 +11,11 @@ const djs = [
     image: remmanImg
   },
   {
-    name: 'DJ HIGGA',
+    name: 'Disco Higgins',
     bio: 'Versatile open-format DJ blending pop, dance and club edits for unforgettable nights across bars, private events and festivals.',
     link: 'https://www.instagram.com/oliver_wh/',
     linkLabel: 'Instagram',
-    image: higgaImg
+    image: discoHigginsImg
   }
 ];
 </script>

@@ -1,6 +1,6 @@
 <script setup>
 import remmanSetImg from '../assets/remman/dj/3Rem.jpg';
-import higgaSetImg from '../assets/higga/dj/1Hig.jpeg';
+import discoHigginsSetImg from '../assets/disco-higgins/dj/1DiscoHiggins.jpeg';
 import sharedImg from '../assets/shared/MountainShared.JPG';
 </script>
 
@@ -18,7 +18,7 @@ import sharedImg from '../assets/shared/MountainShared.JPG';
         </p>
         <div class="about__media" aria-label="C.Y.L.D event photos">
           <img :src="remmanSetImg" alt="DJ REMMAN performing" />
-          <img :src="higgaSetImg" alt="DJ HIGGA performing" />
+          <img :src="discoHigginsSetImg" alt="Disco Higgins performing" />
           <img :src="sharedImg" alt="C.Y.L.D travel and event atmosphere" />
         </div>
       </div>

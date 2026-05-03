@@ -1,6 +1,6 @@
 <script setup>
 import clubImg from '../assets/remman/dj/2Rem.jpeg';
-import festivalImg from '../assets/higga/dj/2Hig.jpeg';
+import festivalImg from '../assets/disco-higgins/dj/2DiscoHiggins.jpeg';
 import privateImg from '../assets/PrivateEvent.jpeg';
 import barImg from '../assets/BarsAndLounges.JPG';
 import corporateImg from '../assets/CorporateEvent.jpeg';
