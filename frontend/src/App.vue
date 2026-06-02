@@ -4,6 +4,7 @@ import HowItWorks from './components/HowItWorks.vue';
 import StatsStrip from './components/StatsStrip.vue';
 import About from './components/About.vue';
 import DJs from './components/DJs.vue';
+import Listen from './components/Listen.vue';
 import Events from './components/Events.vue';
 import BookingForm from './components/BookingForm.vue';
 import Socials from './components/Socials.vue';
@@ -18,6 +19,7 @@ import Footer from './components/Footer.vue';
       <StatsStrip class="section-shell" />
       <About />
       <DJs />
+      <Listen />
       <Events />
       <BookingForm />
       <Socials />
