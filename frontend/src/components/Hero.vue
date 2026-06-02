@@ -24,8 +24,10 @@ onBeforeUnmount(() => window.removeEventListener('scroll', handleScroll));
       <nav :class="['hero__nav-links', { 'is-open': menuOpen }]">
         <a href="#about" @click="menuOpen = false">About</a>
         <a href="#djs" @click="menuOpen = false">DJs</a>
+        <a href="#listen" @click="menuOpen = false">Listen</a>
         <a href="#events" @click="menuOpen = false">Events</a>
         <a href="#booking" @click="menuOpen = false">Booking</a>
+        <a href="#socials" @click="menuOpen = false">Socials</a>
       </nav>
     </div>
 

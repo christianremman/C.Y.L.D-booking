@@ -54,3 +54,19 @@ describe('Hero copy', () => {
     expect(wrapper.find('.hero__subtitle').text()).toBe('Your event. Our energy.')
   })
 })
+
+describe('Hero nav links', () => {
+  it('contains a link to #listen', () => {
+    const wrapper = mount(Hero)
+    const links = wrapper.findAll('.hero__nav-links a')
+    const hrefs = links.map(l => l.attributes('href'))
+    expect(hrefs).toContain('#listen')
+  })
+
+  it('contains a link to #socials', () => {
+    const wrapper = mount(Hero)
+    const links = wrapper.findAll('.hero__nav-links a')
+    const hrefs = links.map(l => l.attributes('href'))
+    expect(hrefs).toContain('#socials')
+  })
+})
