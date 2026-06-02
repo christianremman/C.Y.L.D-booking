@@ -17,15 +17,18 @@ public class EmailBookingService implements BookingService {
     private final JavaMailSender mailSender;
     private final String mailFrom;
     private final String bookingRecipient;
+    private final String bookingBcc;
 
     public EmailBookingService(
             JavaMailSender mailSender,
             @Value("${booking.mail.from:}") String mailFrom,
-            @Value("${booking.mail.recipient:}") String bookingRecipient
+            @Value("${booking.mail.recipient:}") String bookingRecipient,
+            @Value("${booking.mail.bcc:}") String bookingBcc
     ) {
         this.mailSender = mailSender;
         this.mailFrom = mailFrom;
         this.bookingRecipient = bookingRecipient;
+        this.bookingBcc = bookingBcc;
     }
 
     @Override
@@ -39,6 +42,9 @@ public class EmailBookingService implements BookingService {
         message.setReplyTo(request.email());
         message.setSubject("New C.Y.L.D booking request from " + request.name());
         message.setText(formatBody(request));
+        if (StringUtils.hasText(bookingBcc)) {
+            message.setBcc(bookingBcc);
+        }
 
         try {
             mailSender.send(message);

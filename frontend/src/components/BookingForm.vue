@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
-
+import { useScrollReveal } from '../composables/useScrollReveal';
 import { buildApiUrl, turnstileSiteKey } from '../lib/config';
 import { loadTurnstile, removeTurnstileWidget, renderTurnstileWidget, resetTurnstileWidget } from '../lib/turnstile';
 
@@ -24,6 +24,9 @@ const turnstileContainer = ref(null);
 const turnstileToken = ref('');
 const widgetId = ref(null);
 const turnstileEnabled = Boolean(turnstileSiteKey);
+
+const sectionRef = ref(null);
+const { isVisible } = useScrollReveal(sectionRef);
 
 const canSubmit = computed(() => {
   if (status.value === 'submitting') {
@@ -121,13 +124,14 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <section id="booking" class="booking">
+  <section id="booking" class="booking reveal" ref="sectionRef" :class="{ 'is-visible': isVisible }">
     <div class="booking__intro">
       <p class="text-kicker">Booking</p>
       <h2 class="section-heading">Bring C.Y.L.D to your night.</h2>
       <p class="section-text">
         Share your event details and we will get back to you with availability and pricing.
       </p>
+      <p class="booking__response-note">Typically reply within 24 hours.</p>
     </div>
 
     <form class="card booking-form" @submit.prevent="submitBooking">
@@ -206,6 +210,14 @@ onBeforeUnmount(() => {
   top: 1.5rem;
 }
 
+.booking__response-note {
+  color: var(--accent-2);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  margin: 0.5rem 0 0;
+}
+
 .booking-form {
   padding: clamp(1rem, 3vw, 1.6rem);
   display: grid;
@@ -265,8 +277,8 @@ button {
 }
 
 .booking-form__status.is-success {
-  border-color: rgba(246, 196, 107, 0.45);
-  background: rgba(246, 196, 107, 0.1);
+  border-color: rgba(74, 197, 120, 0.45);
+  background: rgba(74, 197, 120, 0.1);
 }
 
 .booking-form__status.is-error {

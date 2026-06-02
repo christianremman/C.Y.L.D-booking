@@ -25,6 +25,7 @@ booking:
   mail:
     from: ${MAIL_FROM:}
     recipient: ${BOOKING_RECIPIENT:}
+    bcc: ${BOOKING_BCC:}
   cors:
     allowed-origin: ${FRONTEND_ORIGIN:}
   rate-limit:

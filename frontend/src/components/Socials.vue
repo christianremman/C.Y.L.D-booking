@@ -4,8 +4,8 @@
     <h2 class="section-heading">Connect</h2>
     <div class="social-list">
       <a href="https://instagram.com/christianremman/" rel="noreferrer" aria-label="Instagram">Instagram</a>
-      <a href="https://soundcloud.com" rel="noreferrer" aria-label="SoundCloud">SoundCloud</a>
-      <a href="mailto:cremman@me.com" aria-label="Email">cremman@me.com</a>
+      <a href="https://soundcloud.com/remman-558448967" rel="noreferrer" aria-label="SoundCloud">SoundCloud</a>
+      <a href="mailto:cyldbooking@hotmail.com" aria-label="Email">cyldbooking@hotmail.com</a>
     </div>
   </section>
 </template>
