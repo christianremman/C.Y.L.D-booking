@@ -1,6 +1,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 
-export function useScrollReveal(el, options = {}) {
+export function useScrollReveal(el) {
+  const options = {}
   const isVisible = ref(false)
   let observer
 

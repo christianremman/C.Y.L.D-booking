@@ -1,7 +1,7 @@
 <template>
   <div class="stats-strip">
     <div class="stat">
-      <span class="stat__number">50+</span>
+      <span class="stat__number">100+</span>
       <span class="stat__label">Events</span>
     </div>
     <div class="stat">
