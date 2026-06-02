@@ -1,5 +1,13 @@
+<script setup>
+import { ref } from 'vue';
+import { useScrollReveal } from '../composables/useScrollReveal';
+
+const sectionRef = ref(null);
+const { isVisible } = useScrollReveal(sectionRef);
+</script>
+
 <template>
-  <section class="how-it-works">
+  <section class="how-it-works reveal" ref="sectionRef" :class="{ 'is-visible': isVisible }">
     <p class="text-kicker">Process</p>
     <h2 class="section-heading">How it works</h2>
     <ol class="steps">

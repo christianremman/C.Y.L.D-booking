@@ -5,8 +5,7 @@ import Hero from '../Hero.vue'
 describe('Hero mobile navigation', () => {
   it('nav is hidden by default', () => {
     const wrapper = mount(Hero)
-    const nav = wrapper.find('.hero__nav-links')
-    expect(nav.element.style.display).toBe('none')
+    expect(wrapper.find('.hero__nav-links').classes()).not.toContain('is-open')
   })
 
   it('hamburger button exists', () => {
@@ -22,7 +21,7 @@ describe('Hero mobile navigation', () => {
   it('shows nav after hamburger click', async () => {
     const wrapper = mount(Hero)
     await wrapper.find('.hero__hamburger').trigger('click')
-    expect(wrapper.find('.hero__nav-links').element.style.display).not.toBe('none')
+    expect(wrapper.find('.hero__nav-links').classes()).toContain('is-open')
   })
 
   it('shows ✕ when menu open', async () => {
@@ -36,7 +35,7 @@ describe('Hero mobile navigation', () => {
     const btn = wrapper.find('.hero__hamburger')
     await btn.trigger('click')
     await btn.trigger('click')
-    expect(wrapper.find('.hero__nav-links').element.style.display).toBe('none')
+    expect(wrapper.find('.hero__nav-links').classes()).not.toContain('is-open')
   })
 })
 

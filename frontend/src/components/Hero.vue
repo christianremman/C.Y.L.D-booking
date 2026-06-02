@@ -21,7 +21,7 @@ onBeforeUnmount(() => window.removeEventListener('scroll', handleScroll));
         :aria-label="menuOpen ? 'Close menu' : 'Open menu'"
         @click="menuOpen = !menuOpen"
       >{{ menuOpen ? '✕' : '☰' }}</button>
-      <nav v-show="menuOpen" class="hero__nav-links">
+      <nav :class="['hero__nav-links', { 'is-open': menuOpen }]">
         <a href="#about" @click="menuOpen = false">About</a>
         <a href="#djs" @click="menuOpen = false">DJs</a>
         <a href="#events" @click="menuOpen = false">Events</a>
@@ -252,16 +252,15 @@ onBeforeUnmount(() => window.removeEventListener('scroll', handleScroll));
   }
 
   .hero__nav-links {
+    display: none;
     flex-direction: column;
     width: 100%;
     padding: 0.75rem 0;
     gap: 0.9rem;
   }
-}
 
-@media (min-width: 621px) {
-  .hero__nav-links {
-    display: flex !important;
+  .hero__nav-links.is-open {
+    display: flex;
   }
 }
 </style>

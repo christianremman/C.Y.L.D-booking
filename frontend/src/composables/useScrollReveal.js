@@ -1,7 +1,8 @@
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 
 export function useScrollReveal(el, options = {}) {
   const isVisible = ref(false)
+  let observer
 
   onMounted(() => {
     if (!el?.value) return
@@ -11,7 +12,7 @@ export function useScrollReveal(el, options = {}) {
       return
     }
 
-    const observer = new IntersectionObserver(
+    observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           isVisible.value = true
@@ -23,6 +24,8 @@ export function useScrollReveal(el, options = {}) {
 
     observer.observe(el.value)
   })
+
+  onUnmounted(() => observer?.disconnect())
 
   return { isVisible }
 }
