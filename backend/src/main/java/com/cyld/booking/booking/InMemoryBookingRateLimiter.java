@@ -7,15 +7,20 @@ import java.util.Deque;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 public class InMemoryBookingRateLimiter implements BookingRateLimiter {
 
+    private static final Logger logger = LoggerFactory.getLogger(InMemoryBookingRateLimiter.class);
+    private static final int MAX_IP_ENTRIES = 100_000;
+
     private final ConcurrentMap<String, Deque<Instant>> requestHistoryByIp = new ConcurrentHashMap<>();
-    private final RateLimitProperties properties;
+    private final RateLimitConfig properties;
     private final Clock clock;
 
-    public InMemoryBookingRateLimiter(RateLimitProperties properties, Clock clock) {
+    public InMemoryBookingRateLimiter(RateLimitConfig properties, Clock clock) {
         this.properties = properties;
         this.clock = clock;
     }
@@ -23,7 +28,22 @@ public class InMemoryBookingRateLimiter implements BookingRateLimiter {
     @Override
     public boolean allow(String clientIp) {
         String key = StringUtils.hasText(clientIp) ? clientIp : "unknown";
-        Deque<Instant> requestHistory = requestHistoryByIp.computeIfAbsent(key, ignored -> new ArrayDeque<>());
+
+        Deque<Instant> requestHistory = requestHistoryByIp.get(key);
+        if (requestHistory == null) {
+            // Size check vs putIfAbsent is not atomic: cap is approximate (soft limit).
+            // Overshoot bounded by number of concurrent threads hitting new keys simultaneously.
+            if (requestHistoryByIp.size() >= MAX_IP_ENTRIES) {
+                logger.warn("Rate limit map at capacity, rejecting new key={}", key);
+                return false;
+            }
+            Deque<Instant> newDeque = new ArrayDeque<>();
+            requestHistory = requestHistoryByIp.putIfAbsent(key, newDeque);
+            if (requestHistory == null) {
+                requestHistory = newDeque;
+            }
+        }
+
         Instant now = clock.instant();
         Instant cutoff = now.minus(properties.getWindow());
 
@@ -37,7 +57,8 @@ public class InMemoryBookingRateLimiter implements BookingRateLimiter {
             }
 
             requestHistory.addLast(now);
-            return true;
         }
+
+        return true;
     }
 }

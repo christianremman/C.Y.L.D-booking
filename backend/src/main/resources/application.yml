@@ -30,6 +30,9 @@ booking:
   rate-limit:
     max-requests: ${BOOKING_RATE_LIMIT_MAX_REQUESTS:5}
     window: ${BOOKING_RATE_LIMIT_WINDOW:PT1M}
+  global-rate-limit:
+    max-requests: ${BOOKING_GLOBAL_RATE_LIMIT_MAX_REQUESTS:20}
+    window: ${BOOKING_GLOBAL_RATE_LIMIT_WINDOW:PT1H}
 
 turnstile:
   secret: ${TURNSTILE_SECRET:}
