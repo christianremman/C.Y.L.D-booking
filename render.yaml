@@ -7,7 +7,7 @@ services:
     branch: main
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
-    healthCheckPath: /
+    healthCheckPath: /api/health
     autoDeployTrigger: commit
     envVars:
       - key: MAIL_HOST

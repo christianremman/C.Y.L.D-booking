@@ -163,6 +163,19 @@ class BookingControllerTests {
     }
 
     @Test
+    void rejectsPastEventDate() throws Exception {
+        when(globalRateLimiter.allow("global")).thenReturn(true);
+        mockMvc.perform(post("/api/bookings")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(validRequestJson().replace("\"2027-05-20\"", "\"2020-01-01\"")))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("Event date must be today or in the future."));
+
+        verifyNoInteractions(bookingService, bookingRateLimiter, turnstileVerificationService);
+    }
+
+    @Test
     void allowsConfiguredFrontendOriginForBookingRequests() throws Exception {
         mockMvc.perform(options("/api/bookings")
                         .header("Origin", "https://booking.example.com")
@@ -177,7 +190,7 @@ class BookingControllerTests {
                   "name": "Alex Booker",
                   "email": "alex@example.com",
                   "phone": "+47 123 45 678",
-                  "eventDate": "2026-05-20",
+                  "eventDate": "2027-05-20",
                   "eventLocation": "Oslo",
                   "eventType": "Club night",
                   "budget": "15000 NOK",

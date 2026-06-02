@@ -61,4 +61,21 @@ public class InMemoryBookingRateLimiter implements BookingRateLimiter {
 
         return true;
     }
+
+    void cleanupStaleEntries() {
+        Instant cutoff = clock.instant().minus(properties.getWindow());
+        requestHistoryByIp.entrySet().removeIf(entry -> {
+            Deque<Instant> deque = entry.getValue();
+            synchronized (deque) {
+                while (!deque.isEmpty() && deque.peekFirst().isBefore(cutoff)) {
+                    deque.removeFirst();
+                }
+                return deque.isEmpty();
+            }
+        });
+    }
+
+    int trackedIpCount() {
+        return requestHistoryByIp.size();
+    }
 }

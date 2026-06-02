@@ -12,5 +12,8 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./src/test/setup.js'],
+    env: {
+      VITE_TURNSTILE_SITE_KEY: '',
+    },
   },
 })

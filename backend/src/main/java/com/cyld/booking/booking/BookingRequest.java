@@ -3,6 +3,7 @@ package com.cyld.booking.booking;
 import java.time.LocalDate;
 
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -22,6 +23,7 @@ public record BookingRequest(
         String phone,
 
         @NotNull(message = "Event date is required.")
+        @FutureOrPresent(message = "Event date must be today or in the future.")
         LocalDate eventDate,
 
         @NotBlank(message = "Event location is required.")
