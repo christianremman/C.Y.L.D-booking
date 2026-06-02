@@ -17,12 +17,12 @@ const handleClickOutside = (event) => {
 
 onMounted(() => {
   window.addEventListener('scroll', handleScroll, { passive: true });
-  document.addEventListener('click', handleClickOutside);
+  document.addEventListener('click', handleClickOutside, true);
 });
 
 onBeforeUnmount(() => {
   window.removeEventListener('scroll', handleScroll);
-  document.removeEventListener('click', handleClickOutside);
+  document.removeEventListener('click', handleClickOutside, true);
 });
 </script>
 

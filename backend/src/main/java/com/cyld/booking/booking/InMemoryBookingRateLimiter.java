@@ -35,6 +35,7 @@ public class InMemoryBookingRateLimiter implements BookingRateLimiter {
 
         // compute() is atomic per key in ConcurrentHashMap, eliminating the race between
         // allow() and cleanupStaleEntries() that existed with get() + putIfAbsent() + synchronized.
+        // size() inside the lambda is safe: CHM.size() uses volatile sum counters, not bin locks.
         requestHistoryByIp.compute(key, (k, deque) -> {
             if (deque == null) {
                 // Size check is approximate: cap is a soft limit.
@@ -58,15 +59,21 @@ public class InMemoryBookingRateLimiter implements BookingRateLimiter {
         return allowed[0];
     }
 
-    void cleanupStaleEntries() {
+    @Override
+    public void cleanupStaleEntries() {
         Instant cutoff = clock.instant().minus(properties.getWindow());
+        int removed = 0;
         for (String key : requestHistoryByIp.keySet()) {
-            requestHistoryByIp.computeIfPresent(key, (k, deque) -> {
+            Object result = requestHistoryByIp.computeIfPresent(key, (k, deque) -> {
                 while (!deque.isEmpty() && deque.peekFirst().isBefore(cutoff)) {
                     deque.removeFirst();
                 }
                 return deque.isEmpty() ? null : deque;
             });
+            if (result == null) removed++;
+        }
+        if (removed > 0) {
+            logger.debug("cleanup removed {} stale IP entries", removed);
         }
     }
 

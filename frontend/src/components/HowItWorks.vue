@@ -7,7 +7,7 @@ const { isVisible } = useScrollReveal(sectionRef);
 </script>
 
 <template>
-  <section class="how-it-works reveal" ref="sectionRef" :class="{ 'is-visible': isVisible }">
+  <section id="how-it-works" class="how-it-works reveal" ref="sectionRef" :class="{ 'is-visible': isVisible }">
     <p class="text-kicker">Process</p>
     <h2 class="section-heading">How it works</h2>
     <ol class="steps">

@@ -7,12 +7,12 @@ import org.springframework.stereotype.Component;
 @Component
 class RateLimiterCleanupTask {
 
-    private final InMemoryBookingRateLimiter perIpLimiter;
-    private final InMemoryBookingRateLimiter globalLimiter;
+    private final BookingRateLimiter perIpLimiter;
+    private final BookingRateLimiter globalLimiter;
 
     RateLimiterCleanupTask(
-            @Qualifier("bookingRateLimiter") InMemoryBookingRateLimiter perIpLimiter,
-            @Qualifier("global") InMemoryBookingRateLimiter globalLimiter
+            @Qualifier("bookingRateLimiter") BookingRateLimiter perIpLimiter,
+            @Qualifier("global") BookingRateLimiter globalLimiter
     ) {
         this.perIpLimiter = perIpLimiter;
         this.globalLimiter = globalLimiter;

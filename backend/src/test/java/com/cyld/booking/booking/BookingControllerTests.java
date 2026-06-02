@@ -169,7 +169,7 @@ class BookingControllerTests {
         when(globalRateLimiter.allow("global")).thenReturn(true);
         mockMvc.perform(post("/api/bookings")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(validRequestJson().replaceFirst("(\"eventDate\"\\s*:\\s*)\"[^\"]+\"", "$1\"2020-01-01\"")))
+                        .content(validRequestJson(LocalDate.of(2020, 1, 1))))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.message").value("Event date must be today or in the future."));
@@ -187,6 +187,10 @@ class BookingControllerTests {
     }
 
     private static String validRequestJson() {
+        return validRequestJson(LocalDate.now().plusYears(1));
+    }
+
+    private static String validRequestJson(LocalDate eventDate) {
         return """
                 {
                   "name": "Alex Booker",
@@ -199,6 +203,6 @@ class BookingControllerTests {
                   "message": "We want to book C.Y.L.D for a late set.",
                   "turnstileToken": "token-123"
                 }
-                """.formatted(LocalDate.now().plusYears(1));
+                """.formatted(eventDate);
     }
 }

@@ -28,7 +28,7 @@ function embedUrl(trackUrl) {
           width="100%"
           height="166"
           allow="autoplay"
-          sandbox="allow-scripts allow-same-origin"
+          sandbox="allow-scripts"
           :title="`${p.name} on SoundCloud`"
         ></iframe>
       </div>
