@@ -4,11 +4,11 @@ import java.time.Duration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "booking.rate-limit")
-public class RateLimitProperties implements RateLimitConfig {
+@ConfigurationProperties(prefix = "booking.global-rate-limit")
+public class GlobalRateLimitProperties implements RateLimitConfig {
 
-    private int maxRequests = 5;
-    private Duration window = Duration.ofMinutes(1);
+    private int maxRequests = 20;
+    private Duration window = Duration.ofHours(1);
 
     public int getMaxRequests() {
         return maxRequests;

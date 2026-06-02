@@ -14,10 +14,10 @@ public class InMemoryBookingRateLimiter implements BookingRateLimiter {
     private static final int MAX_IP_ENTRIES = 100_000;
 
     private final ConcurrentMap<String, Deque<Instant>> requestHistoryByIp = new ConcurrentHashMap<>();
-    private final RateLimitProperties properties;
+    private final RateLimitConfig properties;
     private final Clock clock;
 
-    public InMemoryBookingRateLimiter(RateLimitProperties properties, Clock clock) {
+    public InMemoryBookingRateLimiter(RateLimitConfig properties, Clock clock) {
         this.properties = properties;
         this.clock = clock;
     }

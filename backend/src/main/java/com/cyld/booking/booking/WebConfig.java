@@ -3,6 +3,7 @@ package com.cyld.booking.booking;
 import java.time.Clock;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
@@ -11,7 +12,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-@EnableConfigurationProperties({CorsProperties.class, RateLimitProperties.class, TurnstileProperties.class})
+@EnableConfigurationProperties({CorsProperties.class, RateLimitProperties.class, GlobalRateLimitProperties.class, TurnstileProperties.class})
 public class WebConfig {
 
     @Bean
@@ -27,6 +28,12 @@ public class WebConfig {
     @Bean
     BookingRateLimiter bookingRateLimiter(RateLimitProperties rateLimitProperties, Clock clock) {
         return new InMemoryBookingRateLimiter(rateLimitProperties, clock);
+    }
+
+    @Bean
+    @Qualifier("global")
+    BookingRateLimiter globalBookingRateLimiter(GlobalRateLimitProperties globalRateLimitProperties, Clock clock) {
+        return new InMemoryBookingRateLimiter(globalRateLimitProperties, clock);
     }
 
     @Bean

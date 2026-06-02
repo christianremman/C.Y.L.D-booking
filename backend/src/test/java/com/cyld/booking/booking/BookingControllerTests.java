@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
@@ -38,8 +39,13 @@ class BookingControllerTests {
     @MockitoBean
     private BookingRateLimiter bookingRateLimiter;
 
+    @MockitoBean
+    @Qualifier("global")
+    private BookingRateLimiter globalRateLimiter;
+
     @Test
     void acceptsValidRequestAndDelegatesToService() throws Exception {
+        when(globalRateLimiter.allow("global")).thenReturn(true);
         when(bookingRateLimiter.allow("127.0.0.1")).thenReturn(true);
         when(turnstileVerificationService.verify("token-123", "127.0.0.1")).thenReturn(true);
 
@@ -96,7 +102,22 @@ class BookingControllerTests {
     }
 
     @Test
+    void rejectsRequestsThatExceedGlobalRateLimit() throws Exception {
+        when(globalRateLimiter.allow("global")).thenReturn(false);
+
+        mockMvc.perform(post("/api/bookings")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(validRequestJson()))
+                .andExpect(status().isTooManyRequests())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("Booking request could not be sent. Please try again later."));
+
+        verifyNoInteractions(bookingService, turnstileVerificationService, bookingRateLimiter);
+    }
+
+    @Test
     void rejectsRequestsThatExceedRateLimit() throws Exception {
+        when(globalRateLimiter.allow("global")).thenReturn(true);
         when(bookingRateLimiter.allow("127.0.0.1")).thenReturn(false);
 
         mockMvc.perform(post("/api/bookings")
@@ -111,6 +132,7 @@ class BookingControllerTests {
 
     @Test
     void rejectsInvalidTurnstileTokens() throws Exception {
+        when(globalRateLimiter.allow("global")).thenReturn(true);
         when(bookingRateLimiter.allow("127.0.0.1")).thenReturn(true);
         when(turnstileVerificationService.verify("token-123", "127.0.0.1")).thenReturn(false);
 
@@ -126,6 +148,7 @@ class BookingControllerTests {
 
     @Test
     void returnsSafeErrorWhenEmailDeliveryFails() throws Exception {
+        when(globalRateLimiter.allow("global")).thenReturn(true);
         when(bookingRateLimiter.allow("127.0.0.1")).thenReturn(true);
         when(turnstileVerificationService.verify("token-123", "127.0.0.1")).thenReturn(true);
         doThrow(new BookingEmailException("smtp detail")).when(bookingService).sendBookingRequest(any());
