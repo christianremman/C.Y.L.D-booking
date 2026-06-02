@@ -21,3 +21,7 @@ services:
         sync: false
       - key: BOOKING_RECIPIENT
         sync: false
+      - key: FRONTEND_ORIGIN
+        sync: false
+      - key: TURNSTILE_SECRET
+        sync: false

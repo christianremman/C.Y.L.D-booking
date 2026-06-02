@@ -79,9 +79,15 @@ public class BookingController {
     }
 
     private static String extractClientIp(HttpServletRequest request) {
+        String cfIp = request.getHeader("CF-Connecting-IP");
+        if (cfIp != null && !cfIp.isBlank()) {
+            return cfIp.trim();
+        }
+
         String forwardedFor = request.getHeader("X-Forwarded-For");
         if (forwardedFor != null && !forwardedFor.isBlank()) {
-            return forwardedFor.split(",")[0].trim();
+            String[] parts = forwardedFor.split(",");
+            return parts[parts.length - 1].trim();
         }
 
         return request.getRemoteAddr();

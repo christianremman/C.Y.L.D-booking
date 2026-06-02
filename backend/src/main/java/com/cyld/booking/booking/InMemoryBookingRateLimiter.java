@@ -11,6 +11,8 @@ import org.springframework.util.StringUtils;
 
 public class InMemoryBookingRateLimiter implements BookingRateLimiter {
 
+    private static final int MAX_IP_ENTRIES = 100_000;
+
     private final ConcurrentMap<String, Deque<Instant>> requestHistoryByIp = new ConcurrentHashMap<>();
     private final RateLimitProperties properties;
     private final Clock clock;
@@ -23,7 +25,19 @@ public class InMemoryBookingRateLimiter implements BookingRateLimiter {
     @Override
     public boolean allow(String clientIp) {
         String key = StringUtils.hasText(clientIp) ? clientIp : "unknown";
-        Deque<Instant> requestHistory = requestHistoryByIp.computeIfAbsent(key, ignored -> new ArrayDeque<>());
+
+        Deque<Instant> requestHistory = requestHistoryByIp.get(key);
+        if (requestHistory == null) {
+            if (requestHistoryByIp.size() >= MAX_IP_ENTRIES) {
+                return false;
+            }
+            Deque<Instant> newDeque = new ArrayDeque<>();
+            requestHistory = requestHistoryByIp.putIfAbsent(key, newDeque);
+            if (requestHistory == null) {
+                requestHistory = newDeque;
+            }
+        }
+
         Instant now = clock.instant();
         Instant cutoff = now.minus(properties.getWindow());
 
@@ -37,7 +51,12 @@ public class InMemoryBookingRateLimiter implements BookingRateLimiter {
             }
 
             requestHistory.addLast(now);
-            return true;
         }
+
+        if (requestHistory.isEmpty()) {
+            requestHistoryByIp.remove(key, requestHistory);
+        }
+
+        return true;
     }
 }
