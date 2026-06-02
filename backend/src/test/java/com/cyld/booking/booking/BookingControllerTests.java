@@ -12,6 +12,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.LocalDate;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -167,7 +169,7 @@ class BookingControllerTests {
         when(globalRateLimiter.allow("global")).thenReturn(true);
         mockMvc.perform(post("/api/bookings")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(validRequestJson().replace("\"2027-05-20\"", "\"2020-01-01\"")))
+                        .content(validRequestJson().replaceFirst("\"\\d{4}-\\d{2}-\\d{2}\"", "\"2020-01-01\"")))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.message").value("Event date must be today or in the future."));
@@ -190,13 +192,13 @@ class BookingControllerTests {
                   "name": "Alex Booker",
                   "email": "alex@example.com",
                   "phone": "+47 123 45 678",
-                  "eventDate": "2027-05-20",
+                  "eventDate": "%s",
                   "eventLocation": "Oslo",
                   "eventType": "Club night",
                   "budget": "15000 NOK",
                   "message": "We want to book C.Y.L.D for a late set.",
                   "turnstileToken": "token-123"
                 }
-                """;
+                """.formatted(LocalDate.now().plusYears(1));
     }
 }

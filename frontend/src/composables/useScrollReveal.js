@@ -1,7 +1,6 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 
 export function useScrollReveal(el) {
-  const options = {}
   const isVisible = ref(false)
   let observer
 
@@ -20,7 +19,7 @@ export function useScrollReveal(el) {
           observer.disconnect()
         }
       },
-      { threshold: 0.12, ...options },
+      { threshold: 0.12 },
     )
 
     observer.observe(el.value)

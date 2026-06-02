@@ -3,18 +3,32 @@ import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 const menuOpen = ref(false);
 const scrolled = ref(false);
+const navRef = ref(null);
 
 const handleScroll = () => {
   scrolled.value = window.scrollY > 60;
 };
 
-onMounted(() => window.addEventListener('scroll', handleScroll, { passive: true }));
-onBeforeUnmount(() => window.removeEventListener('scroll', handleScroll));
+const handleClickOutside = (event) => {
+  if (menuOpen.value && navRef.value && !navRef.value.contains(event.target)) {
+    menuOpen.value = false;
+  }
+};
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  document.addEventListener('click', handleClickOutside);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', handleScroll);
+  document.removeEventListener('click', handleClickOutside);
+});
 </script>
 
 <template>
   <header class="hero" id="top">
-    <div class="section-shell hero__nav" aria-label="Primary navigation">
+    <div class="section-shell hero__nav" aria-label="Primary navigation" ref="navRef">
       <a href="#top" class="hero__brand">C.Y.L.D</a>
       <button
         class="hero__hamburger"
