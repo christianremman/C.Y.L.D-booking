@@ -143,7 +143,7 @@ onBeforeUnmount(() => window.removeEventListener('scroll', handleScroll));
 .hero h1 {
   margin: 0;
   font-family: Georgia, 'Times New Roman', serif;
-  font-size: clamp(4.5rem, 15vw, 12rem);
+  font-size: clamp(4.5rem, 11vw, 12rem);
   line-height: 0.78;
   letter-spacing: 0;
   text-shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
