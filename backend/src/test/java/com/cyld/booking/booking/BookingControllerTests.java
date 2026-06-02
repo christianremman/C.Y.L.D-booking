@@ -65,6 +65,7 @@ class BookingControllerTests {
 
     @Test
     void rejectsInvalidRequiredFields() throws Exception {
+        when(globalRateLimiter.allow("global")).thenReturn(true);
         mockMvc.perform(post("/api/bookings")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -88,6 +89,7 @@ class BookingControllerTests {
 
     @Test
     void rejectsOversizedPayload() throws Exception {
+        when(globalRateLimiter.allow("global")).thenReturn(true);
         String largeMessage = "x".repeat(2001);
 
         mockMvc.perform(post("/api/bookings")

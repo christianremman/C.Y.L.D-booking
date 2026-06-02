@@ -7,10 +7,13 @@ import java.util.Deque;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 public class InMemoryBookingRateLimiter implements BookingRateLimiter {
 
+    private static final Logger logger = LoggerFactory.getLogger(InMemoryBookingRateLimiter.class);
     private static final int MAX_IP_ENTRIES = 100_000;
 
     private final ConcurrentMap<String, Deque<Instant>> requestHistoryByIp = new ConcurrentHashMap<>();
@@ -29,6 +32,7 @@ public class InMemoryBookingRateLimiter implements BookingRateLimiter {
         Deque<Instant> requestHistory = requestHistoryByIp.get(key);
         if (requestHistory == null) {
             if (requestHistoryByIp.size() >= MAX_IP_ENTRIES) {
+                logger.warn("Rate limit map at capacity, rejecting new key={}", key);
                 return false;
             }
             Deque<Instant> newDeque = new ArrayDeque<>();
@@ -51,10 +55,6 @@ public class InMemoryBookingRateLimiter implements BookingRateLimiter {
             }
 
             requestHistory.addLast(now);
-        }
-
-        if (requestHistory.isEmpty()) {
-            requestHistoryByIp.remove(key, requestHistory);
         }
 
         return true;
