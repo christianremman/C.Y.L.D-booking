@@ -31,6 +31,8 @@ public class InMemoryBookingRateLimiter implements BookingRateLimiter {
 
         Deque<Instant> requestHistory = requestHistoryByIp.get(key);
         if (requestHistory == null) {
+            // Size check vs putIfAbsent is not atomic: cap is approximate (soft limit).
+            // Overshoot bounded by number of concurrent threads hitting new keys simultaneously.
             if (requestHistoryByIp.size() >= MAX_IP_ENTRIES) {
                 logger.warn("Rate limit map at capacity, rejecting new key={}", key);
                 return false;

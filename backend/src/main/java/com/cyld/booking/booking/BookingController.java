@@ -90,11 +90,12 @@ public class BookingController {
         return ResponseEntity.badRequest().body(new BookingResponse(false, message));
     }
 
-    private static String extractClientIp(HttpServletRequest request) {
+    private String extractClientIp(HttpServletRequest request) {
         String cfIp = request.getHeader("CF-Connecting-IP");
         if (cfIp != null && !cfIp.isBlank()) {
             return cfIp.trim();
         }
+        logger.warn("CF-Connecting-IP header absent, falling back to remoteAddr — traffic may be bypassing Cloudflare");
         return request.getRemoteAddr();
     }
 }

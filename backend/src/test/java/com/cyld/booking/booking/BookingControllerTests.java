@@ -89,7 +89,6 @@ class BookingControllerTests {
 
     @Test
     void rejectsOversizedPayload() throws Exception {
-        when(globalRateLimiter.allow("global")).thenReturn(true);
         String largeMessage = "x".repeat(2001);
 
         mockMvc.perform(post("/api/bookings")
