@@ -169,7 +169,7 @@ class BookingControllerTests {
         when(globalRateLimiter.allow("global")).thenReturn(true);
         mockMvc.perform(post("/api/bookings")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(validRequestJson().replaceFirst("\"\\d{4}-\\d{2}-\\d{2}\"", "\"2020-01-01\"")))
+                        .content(validRequestJson().replaceFirst("(\"eventDate\"\\s*:\\s*)\"[^\"]+\"", "$1\"2020-01-01\"")))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.message").value("Event date must be today or in the future."));

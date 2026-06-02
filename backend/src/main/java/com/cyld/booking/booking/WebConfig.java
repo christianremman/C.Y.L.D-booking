@@ -28,13 +28,13 @@ public class WebConfig {
     }
 
     @Bean
-    BookingRateLimiter bookingRateLimiter(RateLimitProperties rateLimitProperties, Clock clock) {
+    InMemoryBookingRateLimiter bookingRateLimiter(RateLimitProperties rateLimitProperties, Clock clock) {
         return new InMemoryBookingRateLimiter(rateLimitProperties, clock);
     }
 
     @Bean
     @Qualifier("global")
-    BookingRateLimiter globalBookingRateLimiter(GlobalRateLimitProperties globalRateLimitProperties, Clock clock) {
+    InMemoryBookingRateLimiter globalBookingRateLimiter(GlobalRateLimitProperties globalRateLimitProperties, Clock clock) {
         return new InMemoryBookingRateLimiter(globalRateLimitProperties, clock);
     }
 

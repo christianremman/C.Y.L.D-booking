@@ -11,19 +11,11 @@ class RateLimiterCleanupTask {
     private final InMemoryBookingRateLimiter globalLimiter;
 
     RateLimiterCleanupTask(
-            @Qualifier("bookingRateLimiter") BookingRateLimiter perIpLimiter,
-            @Qualifier("global") BookingRateLimiter globalLimiter
+            @Qualifier("bookingRateLimiter") InMemoryBookingRateLimiter perIpLimiter,
+            @Qualifier("global") InMemoryBookingRateLimiter globalLimiter
     ) {
-        if (!(perIpLimiter instanceof InMemoryBookingRateLimiter)) {
-            throw new IllegalStateException(
-                    "perIpLimiter must be InMemoryBookingRateLimiter, got: " + perIpLimiter.getClass().getName());
-        }
-        if (!(globalLimiter instanceof InMemoryBookingRateLimiter)) {
-            throw new IllegalStateException(
-                    "globalLimiter must be InMemoryBookingRateLimiter, got: " + globalLimiter.getClass().getName());
-        }
-        this.perIpLimiter = (InMemoryBookingRateLimiter) perIpLimiter;
-        this.globalLimiter = (InMemoryBookingRateLimiter) globalLimiter;
+        this.perIpLimiter = perIpLimiter;
+        this.globalLimiter = globalLimiter;
     }
 
     @Scheduled(fixedDelay = 60_000)
