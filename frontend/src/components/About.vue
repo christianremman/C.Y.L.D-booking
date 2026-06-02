@@ -1,11 +1,16 @@
 <script setup>
+import { ref } from 'vue';
+import { useScrollReveal } from '../composables/useScrollReveal';
 import remmanSetImg from '../assets/remman/dj/3Rem.jpg';
 import discoHigginsSetImg from '../assets/disco-higgins/dj/1DiscoHiggins.jpeg';
 import sharedImg from '../assets/shared/MountainShared.JPG';
+
+const sectionRef = ref(null);
+const { isVisible } = useScrollReveal(sectionRef);
 </script>
 
 <template>
-  <section id="about" class="about">
+  <section id="about" class="about reveal" ref="sectionRef" :class="{ 'is-visible': isVisible }">
     <p class="text-kicker">About the collective</p>
     <div class="about__grid">
       <h2 class="section-heading">Built for the room, not a playlist.</h2>

@@ -1,27 +1,34 @@
 <script setup>
+import { ref } from 'vue';
+import { useScrollReveal } from '../composables/useScrollReveal';
 import remmanImg from '../assets/remman/dj/ProRem.jpeg';
 import discoHigginsImg from '../assets/disco-higgins/dj/ProDiscoHiggins.JPG';
+
+const sectionRef = ref(null);
+const { isVisible } = useScrollReveal(sectionRef);
 
 const djs = [
   {
     name: 'DJ REMMAN',
     bio: 'Experienced club DJ with a passion for house and dance music. Known for reading the crowd and building high-energy sets.',
+    genres: ['House', 'Dance', 'Open Format'],
     link: 'https://www.instagram.com/christianremman/',
     linkLabel: 'Instagram',
-    image: remmanImg
+    image: remmanImg,
   },
   {
     name: 'Disco Higgins',
     bio: 'Versatile open-format DJ blending pop, dance and club edits for unforgettable nights across bars, private events and festivals.',
+    genres: ['Pop', 'Dance', 'Club Edits'],
     link: 'https://www.instagram.com/oliver_wh/',
     linkLabel: 'Instagram',
-    image: discoHigginsImg
-  }
+    image: discoHigginsImg,
+  },
 ];
 </script>
 
 <template>
-  <section id="djs">
+  <section id="djs" ref="sectionRef" class="reveal" :class="{ 'is-visible': isVisible }">
     <p class="text-kicker">Residents</p>
     <h2 class="section-heading">Meet the DJs</h2>
     <div class="dj-grid">
@@ -29,6 +36,9 @@ const djs = [
         <img :src="dj.image" :alt="dj.name" class="dj-card__image" />
         <div class="dj-card__body">
           <h3>{{ dj.name }}</h3>
+          <div class="dj-card__tags">
+            <span v-for="genre in dj.genres" :key="genre" class="tag">{{ genre }}</span>
+          </div>
           <p>{{ dj.bio }}</p>
           <a :href="dj.link" target="_blank" rel="noreferrer">{{ dj.linkLabel }}</a>
         </div>
@@ -73,6 +83,26 @@ const djs = [
   margin: 0;
   font-size: clamp(1.4rem, 2.6vw, 2.2rem);
   line-height: 1;
+}
+
+.dj-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.75rem 0 0;
+}
+
+.tag {
+  display: inline-block;
+  padding: 0.22rem 0.65rem;
+  border: 1px solid rgba(246, 196, 107, 0.35);
+  border-radius: 999px;
+  color: var(--accent-2);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: rgba(246, 196, 107, 0.07);
 }
 
 .dj-card p {
