@@ -277,8 +277,8 @@ button {
 }
 
 .booking-form__status.is-success {
-  border-color: rgba(246, 196, 107, 0.45);
-  background: rgba(246, 196, 107, 0.1);
+  border-color: rgba(74, 197, 120, 0.45);
+  background: rgba(74, 197, 120, 0.1);
 }
 
 .booking-form__status.is-error {
