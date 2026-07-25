@@ -79,6 +79,17 @@ Expected request fields:
 }
 ```
 
+### Preventing Free-Tier Spin-Down
+
+Render's free plan spins the service down after ~15 minutes of no inbound traffic (30-60s cold start on the next request). To keep it warm during active hours without paying for a 24/7 plan, an external cron pinger hits the health check on a schedule:
+
+- Service: [cron-job.org](https://cron-job.org) (free)
+- Target: `GET https://c-y-l-d-booking-page.onrender.com/api/health`
+- Interval: every 10 minutes (under Render's 15-min idle timeout)
+- Time restriction: 08:00-21:00, timezone `Australia/Melbourne` (DST-aware)
+
+`/api/health` is unauthenticated and not subject to `BookingRateLimiter`, so frequent pings are safe. The service is expected to cold-start once per day on the first request after 08:00, since it spins down overnight outside the ping window. This is external configuration only — no backend code is involved.
+
 ## Mail Setup
 
 Copy `.env.example` to `.env` and fill in the SMTP values:
