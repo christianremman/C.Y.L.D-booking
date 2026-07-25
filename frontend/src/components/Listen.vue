@@ -6,7 +6,7 @@ const sectionRef = ref(null);
 const { isVisible } = useScrollReveal(sectionRef);
 
 const players = [
-  { name: 'DJ REMMAN', url: 'https://soundcloud.com/remman-558448967' },
+  { name: 'REMMAN', url: 'https://soundcloud.com/remman-558448967' },
   { name: 'Disco Higgins', url: 'https://soundcloud.com/user-791088678' },
 ];
 

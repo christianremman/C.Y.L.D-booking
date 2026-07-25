@@ -9,7 +9,7 @@ const { isVisible } = useScrollReveal(sectionRef);
 
 const djs = [
   {
-    name: 'DJ REMMAN',
+    name: 'REMMAN',
     bio: 'Experienced club DJ with a passion for house and dance music. Known for reading the crowd and building high-energy sets.',
     genres: ['House', 'Dance', 'Open Format'],
     link: 'https://www.instagram.com/christianremman/',

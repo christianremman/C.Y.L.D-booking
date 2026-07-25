@@ -22,7 +22,7 @@ const { isVisible } = useScrollReveal(sectionRef);
           right vibe for the audience.
         </p>
         <div class="about__media" aria-label="C.Y.L.D event photos">
-          <img :src="remmanSetImg" alt="DJ REMMAN performing" />
+          <img :src="remmanSetImg" alt="REMMAN performing" />
           <img :src="discoHigginsSetImg" alt="Disco Higgins performing" />
           <img :src="sharedImg" alt="C.Y.L.D travel and event atmosphere" />
         </div>

@@ -30,7 +30,7 @@ describe('Listen', () => {
   it('renders DJ names in cards', () => {
     const wrapper = mount(Listen)
     const text = wrapper.text()
-    expect(text).toContain('DJ REMMAN')
+    expect(text).toContain('REMMAN')
     expect(text).toContain('Disco Higgins')
   })
 })
