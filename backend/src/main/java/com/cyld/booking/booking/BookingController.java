@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -23,18 +24,23 @@ public class BookingController {
 
     private static final Logger logger = LoggerFactory.getLogger(BookingController.class);
 
+    private static final String GLOBAL_RATE_LIMIT_KEY = "global";
+
     private final BookingService bookingService;
     private final TurnstileVerificationService turnstileVerificationService;
     private final BookingRateLimiter bookingRateLimiter;
+    private final BookingRateLimiter globalRateLimiter;
 
     public BookingController(
             BookingService bookingService,
             TurnstileVerificationService turnstileVerificationService,
-            BookingRateLimiter bookingRateLimiter
+            BookingRateLimiter bookingRateLimiter,
+            @Qualifier("global") BookingRateLimiter globalRateLimiter
     ) {
         this.bookingService = bookingService;
         this.turnstileVerificationService = turnstileVerificationService;
         this.bookingRateLimiter = bookingRateLimiter;
+        this.globalRateLimiter = globalRateLimiter;
     }
 
     @PostMapping
@@ -44,6 +50,12 @@ public class BookingController {
     ) {
         String clientIp = extractClientIp(httpRequest);
         logger.info("Received booking request from ip={}", clientIp);
+
+        if (!globalRateLimiter.allow(GLOBAL_RATE_LIMIT_KEY)) {
+            logger.warn("Rejected booking request due to global rate limit ip={}", clientIp);
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                    .body(new BookingResponse(false, "Booking request could not be sent. Please try again later."));
+        }
 
         if (!bookingRateLimiter.allow(clientIp)) {
             logger.warn("Rejected booking request due to rate limit ip={}", clientIp);
@@ -78,12 +90,12 @@ public class BookingController {
         return ResponseEntity.badRequest().body(new BookingResponse(false, message));
     }
 
-    private static String extractClientIp(HttpServletRequest request) {
-        String forwardedFor = request.getHeader("X-Forwarded-For");
-        if (forwardedFor != null && !forwardedFor.isBlank()) {
-            return forwardedFor.split(",")[0].trim();
+    private String extractClientIp(HttpServletRequest request) {
+        String cfIp = request.getHeader("CF-Connecting-IP");
+        if (cfIp != null && !cfIp.isBlank()) {
+            return cfIp.trim();
         }
-
+        logger.warn("CF-Connecting-IP header absent, falling back to remoteAddr — traffic may be bypassing Cloudflare");
         return request.getRemoteAddr();
     }
 }

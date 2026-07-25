@@ -12,8 +12,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.LocalDate;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
@@ -38,8 +41,13 @@ class BookingControllerTests {
     @MockitoBean
     private BookingRateLimiter bookingRateLimiter;
 
+    @MockitoBean
+    @Qualifier("global")
+    private BookingRateLimiter globalRateLimiter;
+
     @Test
     void acceptsValidRequestAndDelegatesToService() throws Exception {
+        when(globalRateLimiter.allow("global")).thenReturn(true);
         when(bookingRateLimiter.allow("127.0.0.1")).thenReturn(true);
         when(turnstileVerificationService.verify("token-123", "127.0.0.1")).thenReturn(true);
 
@@ -59,6 +67,7 @@ class BookingControllerTests {
 
     @Test
     void rejectsInvalidRequiredFields() throws Exception {
+        when(globalRateLimiter.allow("global")).thenReturn(true);
         mockMvc.perform(post("/api/bookings")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -96,7 +105,22 @@ class BookingControllerTests {
     }
 
     @Test
+    void rejectsRequestsThatExceedGlobalRateLimit() throws Exception {
+        when(globalRateLimiter.allow("global")).thenReturn(false);
+
+        mockMvc.perform(post("/api/bookings")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(validRequestJson()))
+                .andExpect(status().isTooManyRequests())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("Booking request could not be sent. Please try again later."));
+
+        verifyNoInteractions(bookingService, turnstileVerificationService, bookingRateLimiter);
+    }
+
+    @Test
     void rejectsRequestsThatExceedRateLimit() throws Exception {
+        when(globalRateLimiter.allow("global")).thenReturn(true);
         when(bookingRateLimiter.allow("127.0.0.1")).thenReturn(false);
 
         mockMvc.perform(post("/api/bookings")
@@ -111,6 +135,7 @@ class BookingControllerTests {
 
     @Test
     void rejectsInvalidTurnstileTokens() throws Exception {
+        when(globalRateLimiter.allow("global")).thenReturn(true);
         when(bookingRateLimiter.allow("127.0.0.1")).thenReturn(true);
         when(turnstileVerificationService.verify("token-123", "127.0.0.1")).thenReturn(false);
 
@@ -126,6 +151,7 @@ class BookingControllerTests {
 
     @Test
     void returnsSafeErrorWhenEmailDeliveryFails() throws Exception {
+        when(globalRateLimiter.allow("global")).thenReturn(true);
         when(bookingRateLimiter.allow("127.0.0.1")).thenReturn(true);
         when(turnstileVerificationService.verify("token-123", "127.0.0.1")).thenReturn(true);
         doThrow(new BookingEmailException("smtp detail")).when(bookingService).sendBookingRequest(any());
@@ -139,6 +165,19 @@ class BookingControllerTests {
     }
 
     @Test
+    void rejectsPastEventDate() throws Exception {
+        when(globalRateLimiter.allow("global")).thenReturn(true);
+        mockMvc.perform(post("/api/bookings")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(validRequestJson(LocalDate.of(2020, 1, 1))))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("Event date must be today or in the future."));
+
+        verifyNoInteractions(bookingService, bookingRateLimiter, turnstileVerificationService);
+    }
+
+    @Test
     void allowsConfiguredFrontendOriginForBookingRequests() throws Exception {
         mockMvc.perform(options("/api/bookings")
                         .header("Origin", "https://booking.example.com")
@@ -148,18 +187,22 @@ class BookingControllerTests {
     }
 
     private static String validRequestJson() {
+        return validRequestJson(LocalDate.now().plusYears(1));
+    }
+
+    private static String validRequestJson(LocalDate eventDate) {
         return """
                 {
                   "name": "Alex Booker",
                   "email": "alex@example.com",
                   "phone": "+47 123 45 678",
-                  "eventDate": "2026-05-20",
+                  "eventDate": "%s",
                   "eventLocation": "Oslo",
                   "eventType": "Club night",
                   "budget": "15000 NOK",
                   "message": "We want to book C.Y.L.D for a late set.",
                   "turnstileToken": "token-123"
                 }
-                """;
+                """.formatted(eventDate);
     }
 }

@@ -1,12 +1,47 @@
+<script setup>
+import { ref, onMounted, onBeforeUnmount } from 'vue';
+
+const menuOpen = ref(false);
+const scrolled = ref(false);
+const navRef = ref(null);
+
+const handleScroll = () => {
+  scrolled.value = window.scrollY > 60;
+};
+
+const handleClickOutside = (event) => {
+  if (menuOpen.value && navRef.value && !navRef.value.contains(event.target)) {
+    menuOpen.value = false;
+  }
+};
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  document.addEventListener('click', handleClickOutside, true);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', handleScroll);
+  document.removeEventListener('click', handleClickOutside, true);
+});
+</script>
+
 <template>
   <header class="hero" id="top">
-    <div class="section-shell hero__nav" aria-label="Primary navigation">
+    <div class="section-shell hero__nav" aria-label="Primary navigation" ref="navRef">
       <a href="#top" class="hero__brand">C.Y.L.D</a>
-      <nav>
-        <a href="#about">About</a>
-        <a href="#djs">DJs</a>
-        <a href="#events">Events</a>
-        <a href="#booking">Booking</a>
+      <button
+        class="hero__hamburger"
+        :aria-label="menuOpen ? 'Close menu' : 'Open menu'"
+        @click="menuOpen = !menuOpen"
+      >{{ menuOpen ? '✕' : '☰' }}</button>
+      <nav :class="['hero__nav-links', { 'is-open': menuOpen }]">
+        <a href="#about" @click="menuOpen = false">About</a>
+        <a href="#djs" @click="menuOpen = false">DJs</a>
+        <a href="#listen" @click="menuOpen = false">Listen</a>
+        <a href="#events" @click="menuOpen = false">Events</a>
+        <a href="#booking" @click="menuOpen = false">Booking</a>
+        <a href="#socials" @click="menuOpen = false">Socials</a>
       </nav>
     </div>
 
@@ -16,7 +51,7 @@
         <h1>C.Y.L.D</h1>
       </div>
       <div class="hero__copy">
-        <p class="hero__subtitle">DJ collective for clubs, events and festivals.</p>
+        <p class="hero__subtitle">Your event. Our energy.</p>
         <p class="hero__text">
           C.Y.L.D delivers versatile DJ performances tailored to your event. From clubs and bars to
           private parties and festivals, we bring the energy and adapt to the crowd.
@@ -24,6 +59,13 @@
         <a href="#booking" class="hero__cta">Book Us</a>
       </div>
     </div>
+
+    <a
+      href="#about"
+      class="hero__scroll-indicator"
+      :class="{ 'is-hidden': scrolled }"
+      aria-label="Scroll to about"
+    >↓</a>
   </header>
 </template>
 
@@ -62,7 +104,25 @@
   letter-spacing: 0.14em;
 }
 
-nav {
+.hero__hamburger {
+  display: none;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  padding: 0.4rem 0.7rem;
+  font-size: 1.1rem;
+  cursor: pointer;
+  line-height: 1;
+  transition: border-color 0.2s ease;
+  z-index: 3;
+}
+
+.hero__hamburger:hover {
+  border-color: rgba(255, 248, 239, 0.4);
+}
+
+.hero__nav-links {
   display: flex;
   gap: clamp(0.8rem, 2.2vw, 1.8rem);
   color: var(--text-muted);
@@ -71,12 +131,12 @@ nav {
   text-transform: uppercase;
 }
 
-nav a {
+.hero__nav-links a {
   transition: color 0.2s ease;
 }
 
-nav a:hover,
-nav a:focus-visible {
+.hero__nav-links a:hover,
+.hero__nav-links a:focus-visible {
   color: var(--text);
 }
 
@@ -92,10 +152,14 @@ nav a:focus-visible {
   animation: fade-up 0.9s ease both;
 }
 
+.hero__content > * {
+  min-width: 0;
+}
+
 .hero h1 {
   margin: 0;
   font-family: Georgia, 'Times New Roman', serif;
-  font-size: clamp(4.5rem, 15vw, 12rem);
+  font-size: clamp(4.5rem, 11vw, 12rem);
   line-height: 0.78;
   letter-spacing: 0;
   text-shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
@@ -140,6 +204,29 @@ nav a:focus-visible {
   outline-offset: 3px;
 }
 
+.hero__scroll-indicator {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  font-size: 1.4rem;
+  color: var(--text-muted);
+  opacity: 1;
+  transition: opacity 0.4s ease;
+  animation: bob 2s ease-in-out infinite;
+}
+
+.hero__scroll-indicator.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes bob {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(6px); }
+}
+
 @keyframes fade-up {
   from {
     opacity: 0;
@@ -151,12 +238,16 @@ nav a:focus-visible {
   }
 }
 
-@media (max-width: 820px) {
+@media (max-width: 1024px) {
   .hero__content {
     grid-template-columns: 1fr;
     align-items: end;
     min-height: calc(92vh - 72px);
     padding: 6rem 0 4rem;
+  }
+
+  .hero__copy {
+    order: -1;
   }
 
   .hero::before {
@@ -168,11 +259,24 @@ nav a:focus-visible {
 
 @media (max-width: 620px) {
   .hero__nav {
-    align-items: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
   }
 
-  nav {
+  .hero__hamburger {
+    display: block;
+  }
+
+  .hero__nav-links {
     display: none;
+    flex-direction: column;
+    width: 100%;
+    padding: 0.75rem 0;
+    gap: 0.9rem;
+  }
+
+  .hero__nav-links.is-open {
+    display: flex;
   }
 }
 </style>

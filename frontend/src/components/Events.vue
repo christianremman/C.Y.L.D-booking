@@ -1,9 +1,14 @@
 <script setup>
+import { ref } from 'vue';
+import { useScrollReveal } from '../composables/useScrollReveal';
 import clubImg from '../assets/remman/dj/2Rem.jpeg';
-import festivalImg from '../assets/higga/dj/2Hig.jpeg';
+import festivalImg from '../assets/disco-higgins/dj/2DiscoHiggins.jpeg';
 import privateImg from '../assets/PrivateEvent.jpeg';
 import barImg from '../assets/BarsAndLounges.JPG';
 import corporateImg from '../assets/CorporateEvent.jpeg';
+
+const sectionRef = ref(null);
+const { isVisible } = useScrollReveal(sectionRef);
 
 const events = [
   { title: 'Clubs', image: clubImg },
@@ -15,7 +20,7 @@ const events = [
 </script>
 
 <template>
-  <section id="events">
+  <section id="events" ref="sectionRef" class="reveal" :class="{ 'is-visible': isVisible }">
     <p class="text-kicker">Events</p>
     <h2 class="section-heading">Where We Perform</h2>
     <p class="section-text">We adapt our music selection to the crowd and the atmosphere of the event.</p>

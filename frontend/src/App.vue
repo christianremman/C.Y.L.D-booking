@@ -1,7 +1,10 @@
 <script setup>
 import Hero from './components/Hero.vue';
+import HowItWorks from './components/HowItWorks.vue';
+import StatsStrip from './components/StatsStrip.vue';
 import About from './components/About.vue';
 import DJs from './components/DJs.vue';
+import Listen from './components/Listen.vue';
 import Events from './components/Events.vue';
 import BookingForm from './components/BookingForm.vue';
 import Socials from './components/Socials.vue';
@@ -12,8 +15,11 @@ import Footer from './components/Footer.vue';
   <div class="app">
     <Hero />
     <main>
+      <HowItWorks />
+      <StatsStrip class="section-shell" />
       <About />
       <DJs />
+      <Listen />
       <Events />
       <BookingForm />
       <Socials />
@@ -112,6 +118,17 @@ section {
   font-weight: 800;
   letter-spacing: 0.18em;
   text-transform: uppercase;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 ::selection {

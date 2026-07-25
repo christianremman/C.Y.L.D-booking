@@ -24,7 +24,8 @@ class EmailBookingServiceTests {
         EmailBookingService service = new EmailBookingService(
                 mailSender,
                 "booking@example.com",
-                "recipient@example.com"
+                "recipient@example.com",
+                ""
         );
 
         service.sendBookingRequest(request());
@@ -53,7 +54,8 @@ class EmailBookingServiceTests {
         EmailBookingService service = new EmailBookingService(
                 mailSender,
                 "booking@example.com",
-                "recipient@example.com"
+                "recipient@example.com",
+                ""
         );
         doThrow(new MailSendException("smtp failure")).when(mailSender).send(any(SimpleMailMessage.class));
 
@@ -64,7 +66,7 @@ class EmailBookingServiceTests {
 
     @Test
     void rejectsMissingMailConfiguration() {
-        EmailBookingService service = new EmailBookingService(mailSender, "", "");
+        EmailBookingService service = new EmailBookingService(mailSender, "", "", "");
 
         assertThatThrownBy(() -> service.sendBookingRequest(request()))
                 .isInstanceOf(BookingEmailException.class)

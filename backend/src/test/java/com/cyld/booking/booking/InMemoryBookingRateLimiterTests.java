@@ -27,6 +27,44 @@ class InMemoryBookingRateLimiterTests {
     }
 
     @Test
+    void cleanupStaleEntriesRemovesExpiredIps() {
+        MutableClock clock = new MutableClock(Instant.parse("2026-04-29T10:00:00Z"));
+        RateLimitProperties properties = new RateLimitProperties();
+        properties.setMaxRequests(5);
+        properties.setWindow(Duration.ofMinutes(1));
+
+        InMemoryBookingRateLimiter limiter = new InMemoryBookingRateLimiter(properties, clock);
+
+        limiter.allow("203.0.113.10");
+        limiter.allow("203.0.113.20");
+        assertThat(limiter.trackedIpCount()).isEqualTo(2);
+
+        clock.advance(Duration.ofMinutes(2));
+        limiter.cleanupStaleEntries();
+
+        assertThat(limiter.trackedIpCount()).isEqualTo(0);
+    }
+
+    @Test
+    void cleanupStaleEntriesRetainsActiveIps() {
+        MutableClock clock = new MutableClock(Instant.parse("2026-04-29T10:00:00Z"));
+        RateLimitProperties properties = new RateLimitProperties();
+        properties.setMaxRequests(5);
+        properties.setWindow(Duration.ofMinutes(1));
+
+        InMemoryBookingRateLimiter limiter = new InMemoryBookingRateLimiter(properties, clock);
+
+        limiter.allow("203.0.113.10");
+        clock.advance(Duration.ofSeconds(30));
+        limiter.allow("203.0.113.20");
+
+        clock.advance(Duration.ofSeconds(31));
+        limiter.cleanupStaleEntries();
+
+        assertThat(limiter.trackedIpCount()).isEqualTo(1);
+    }
+
+    @Test
     void allowsRequestsAgainAfterWindowExpires() {
         MutableClock clock = new MutableClock(Instant.parse("2026-04-29T10:00:00Z"));
         RateLimitProperties properties = new RateLimitProperties();

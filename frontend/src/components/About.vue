@@ -1,11 +1,16 @@
 <script setup>
+import { ref } from 'vue';
+import { useScrollReveal } from '../composables/useScrollReveal';
 import remmanSetImg from '../assets/remman/dj/3Rem.jpg';
-import higgaSetImg from '../assets/higga/dj/1Hig.jpeg';
+import discoHigginsSetImg from '../assets/disco-higgins/dj/1DiscoHiggins.jpeg';
 import sharedImg from '../assets/shared/MountainShared.JPG';
+
+const sectionRef = ref(null);
+const { isVisible } = useScrollReveal(sectionRef);
 </script>
 
 <template>
-  <section id="about" class="about">
+  <section id="about" class="about reveal" ref="sectionRef" :class="{ 'is-visible': isVisible }">
     <p class="text-kicker">About the collective</p>
     <div class="about__grid">
       <h2 class="section-heading">Built for the room, not a playlist.</h2>
@@ -18,7 +23,7 @@ import sharedImg from '../assets/shared/MountainShared.JPG';
         </p>
         <div class="about__media" aria-label="C.Y.L.D event photos">
           <img :src="remmanSetImg" alt="DJ REMMAN performing" />
-          <img :src="higgaSetImg" alt="DJ HIGGA performing" />
+          <img :src="discoHigginsSetImg" alt="Disco Higgins performing" />
           <img :src="sharedImg" alt="C.Y.L.D travel and event atmosphere" />
         </div>
       </div>

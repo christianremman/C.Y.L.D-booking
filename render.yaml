@@ -4,9 +4,10 @@ services:
     runtime: docker
     plan: free
     region: frankfurt
+    branch: main
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
-    healthCheckPath: /
+    healthCheckPath: /api/health
     autoDeployTrigger: commit
     envVars:
       - key: MAIL_HOST
@@ -20,4 +21,8 @@ services:
       - key: MAIL_FROM
         sync: false
       - key: BOOKING_RECIPIENT
+        sync: false
+      - key: FRONTEND_ORIGIN
+        sync: false
+      - key: TURNSTILE_SECRET
         sync: false
