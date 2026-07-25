@@ -28,8 +28,8 @@ public class CloudflareTurnstileService implements TurnstileVerificationService 
     @Override
     public boolean verify(String token, String clientIp) {
         if (!StringUtils.hasText(properties.getSecret())) {
-            logger.warn("Turnstile verification failed because TURNSTILE_SECRET is not configured.");
-            return false;
+            logger.info("Turnstile verification skipped because TURNSTILE_SECRET is not configured.");
+            return true;
         }
 
         if (!StringUtils.hasText(token)) {

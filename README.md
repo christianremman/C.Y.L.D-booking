@@ -108,13 +108,16 @@ Required variables:
 - `MAIL_PASSWORD`
 - `MAIL_FROM`
 - `BOOKING_RECIPIENT`
-- `TURNSTILE_SECRET`
 - `FRONTEND_ORIGIN`
+
+Optional variables:
+
+- `TURNSTILE_SECRET` — enables Cloudflare Turnstile bot verification on `/api/bookings`. Leave unset to skip verification entirely (bookings are accepted without a token). Must be paired with `VITE_TURNSTILE_SITE_KEY` on the frontend build to actually show the widget.
 
 Frontend build variables for split deployments:
 
 - `VITE_API_BASE_URL`
-- `VITE_TURNSTILE_SITE_KEY`
+- `VITE_TURNSTILE_SITE_KEY` — optional, pairs with `TURNSTILE_SECRET` above. Leave unset to hide the Turnstile widget.
 
 Use provider-specific app passwords where required, especially for Gmail. For local testing, Mailtrap is a safer option than sending real email. Never commit a real `.env` file.
 

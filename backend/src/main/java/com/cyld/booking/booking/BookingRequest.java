@@ -41,7 +41,6 @@ public record BookingRequest(
         @Size(max = 2000, message = "Message must be 2000 characters or fewer.")
         String message,
 
-        @NotBlank(message = "Turnstile token is required.")
         @Size(max = 2048, message = "Turnstile token must be 2048 characters or fewer.")
         String turnstileToken
 ) {

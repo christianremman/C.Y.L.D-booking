@@ -52,4 +52,17 @@ class CloudflareTurnstileServiceTests {
 
         server.verify();
     }
+
+    @Test
+    void skipsVerificationWhenSecretNotConfigured() {
+        RestTemplate restTemplate = new RestTemplate();
+        MockRestServiceServer server = MockRestServiceServer.createServer(restTemplate);
+        TurnstileProperties properties = new TurnstileProperties();
+
+        CloudflareTurnstileService service = new CloudflareTurnstileService(restTemplate, properties);
+
+        assertThat(service.verify("", "203.0.113.10")).isTrue();
+
+        server.verify();
+    }
 }
